@@ -8,7 +8,15 @@ import { Humans } from './schemas/humans.schema';
 export class HumansService {
   constructor(@InjectModel('Humans') private humanModel: Model<Humans>) {}
 
-  create(createHumanDto: CreateHumanDto) {
+  async create(createHumanDto: CreateHumanDto) {
+    const existingHuman = await this.humanModel
+      .findOne({ vat: createHumanDto.vat })
+      .exec();
+
+    if (existingHuman) {
+      throw new Error('Human with this VAT already exists');
+    }
+
     const createdHuman = new this.humanModel(createHumanDto);
 
     return createdHuman.save();

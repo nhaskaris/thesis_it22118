@@ -1,14 +1,27 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Res,
+} from '@nestjs/common';
 import { HumansService } from './humans.service';
 import { CreateHumanDto } from './dto/create-human.dto';
+import { Response } from 'express';
 
 @Controller('humans')
 export class HumansController {
   constructor(private readonly humansService: HumansService) {}
 
   @Post()
-  create(@Body() createHumanDto: CreateHumanDto) {
-    return this.humansService.create(createHumanDto);
+  async create(@Body() createHumanDto: CreateHumanDto, @Res() res: Response) {
+    try {
+      return await this.humansService.create(createHumanDto);
+    } catch (e) {
+      res.status(400).send(e.message);
+    }
   }
 
   @Get()
