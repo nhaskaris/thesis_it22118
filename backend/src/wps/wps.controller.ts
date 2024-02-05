@@ -40,4 +40,9 @@ export class WpsController {
   remove() {
     return this.wpsService.deleteAll();
   }
+
+  @Delete(':id')
+  removeOne(@Param('id') id: string) {
+    return this.wpsService.remove(id);
+  }
 }

@@ -42,4 +42,8 @@ export class WpsService {
     //update wp
     await this.wpModel.updateOne({ _id: id }, oldWp).exec();
   }
+
+  async remove(id: string) {
+    return await this.wpModel.findByIdAndDelete(id).exec();
+  }
 }
