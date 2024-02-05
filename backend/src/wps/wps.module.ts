@@ -8,5 +8,6 @@ import { Wps, WpsSchema } from './schemas/wps.schema';
   imports: [MongooseModule.forFeature([{ name: Wps.name, schema: WpsSchema }])],
   controllers: [WpsController],
   providers: [WpsService],
+  exports: [WpsService],
 })
 export class WpsModule {}
