@@ -5,6 +5,7 @@ import { WpsModule } from './wps/wps.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectsModule } from './projects/projects.module';
 import { HumansModule } from './humans/humans.module';
+import { ContractsModule } from './contracts/contracts.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { HumansModule } from './humans/humans.module';
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
     ProjectsModule,
     HumansModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
