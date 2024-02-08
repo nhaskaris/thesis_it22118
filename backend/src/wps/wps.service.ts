@@ -1,20 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateWpDto } from './dto/create-wp.dto';
 import { UpdateWpDto } from './dto/update-wp.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Wps } from './schemas/wps.schema';
+import { Wp } from './schemas/wps.schema';
 
 @Injectable()
 export class WpsService {
-  constructor(@InjectModel('Wps') private wpModel: Model<Wps>) {}
+  constructor(@InjectModel('Wp') private wpModel: Model<Wp>) {}
 
-  create(createWpDto: CreateWpDto): Promise<Wps> {
+  create(createWpDto: CreateWpDto): Promise<Wp> {
     const createdWp = new this.wpModel(createWpDto);
     return createdWp.save();
   }
 
-  findAll(): Promise<Wps[]> {
+  findAll(): Promise<Wp[]> {
     return this.wpModel.find().exec();
   }
 

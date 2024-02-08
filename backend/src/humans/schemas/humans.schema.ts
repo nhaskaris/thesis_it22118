@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type HumansDocument = HydratedDocument<Humans>;
+export type HumanDocument = HydratedDocument<Human>;
 
 @Schema()
-export class Humans {
+export class Human {
   @Prop()
   lastName: string;
 
@@ -15,4 +15,4 @@ export class Humans {
   vat: string;
 }
 
-export const HumansSchema = SchemaFactory.createForClass(Humans);
+export const HumanSchema = SchemaFactory.createForClass(Human);

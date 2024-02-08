@@ -9,8 +9,8 @@ import { ContractsModule } from './contracts/contracts.module';
 
 @Module({
   imports: [
-    WpsModule,
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
+    WpsModule,
     ProjectsModule,
     HumansModule,
     ContractsModule,

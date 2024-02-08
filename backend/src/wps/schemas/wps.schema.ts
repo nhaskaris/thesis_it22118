@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Interval } from '../../types/interval';
 
-export type WpsDocument = HydratedDocument<Wps>;
+export type WpDocument = HydratedDocument<Wp>;
 
 @Schema()
-export class Wps {
+export class Wp {
   @Prop()
   title: string;
 
@@ -21,4 +21,4 @@ export class Wps {
   activeIntervals: Interval[];
 }
 
-export const WpsSchema = SchemaFactory.createForClass(Wps);
+export const WpSchema = SchemaFactory.createForClass(Wp);

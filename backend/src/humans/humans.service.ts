@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateHumanDto } from './dto/create-human.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Humans } from './schemas/humans.schema';
+import { Human } from './schemas/humans.schema';
 
 @Injectable()
 export class HumansService {
-  constructor(@InjectModel('Humans') private humanModel: Model<Humans>) {}
+  constructor(@InjectModel('Human') private humanModel: Model<Human>) {}
 
   async create(createHumanDto: CreateHumanDto) {
     const existingHuman = await this.humanModel

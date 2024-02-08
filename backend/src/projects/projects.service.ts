@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Project } from './schemas/projects.schemas';
 import { Model } from 'mongoose';
 import { WpsService } from 'src/wps/wps.service';
-import { Wps } from 'src/wps/schemas/wps.schema';
+import { Wp } from 'src/wps/schemas/wps.schema';
 
 @Injectable()
 export class ProjectsService {
@@ -29,13 +29,13 @@ export class ProjectsService {
   }
 
   findAll() {
-    return this.projectModel.find().populate('wps', null, Wps.name).exec();
+    return this.projectModel.find().populate('wp', null, Wp.name).exec();
   }
 
   findOne(id: string) {
     return this.projectModel
       .findById(id)
-      .populate('wps', null, Wps.name)
+      .populate('wp', null, Wp.name)
       .exec();
   }
 

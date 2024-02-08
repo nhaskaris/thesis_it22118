@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Interval } from '../../types/interval';
-import { Wp } from '../../wps/entities/wp.entity';
+import { Wp } from '../../wps/schemas/wps.schema'
 
 export type ProjectDocument = Project & mongoose.HydratedDocument<Project>;
 
@@ -13,7 +13,7 @@ export class Project {
   @Prop()
   description: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wps' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' }] })
   wps: Wp[];
 
   @Prop(

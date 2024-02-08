@@ -8,9 +8,10 @@ import { WpsModule } from 'src/wps/wps.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
-    WpsModule,
+    WpsModule
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],
+  exports: [ProjectsService]
 })
 export class ProjectsModule {}
