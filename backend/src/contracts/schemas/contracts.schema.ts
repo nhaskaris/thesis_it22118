@@ -5,7 +5,6 @@ import { Project } from '../../projects/schemas/projects.schemas';
 import { Human } from '../../humans/schemas/humans.schema';
 import { Wp } from '../../wps/schemas/wps.schema';
 
-
 export type ContractDocument = Contract & mongoose.HydratedDocument<Contract>;
 
 @Schema()
@@ -29,10 +28,10 @@ export class Contract {
   duration: Interval;
 
   @Prop()
-  hourlyRate: Number
+  hourlyRate: number;
 
   @Prop()
-  totalCost: Number
+  totalCost: number;
 }
 
 export const ContractSchema = SchemaFactory.createForClass(Contract);

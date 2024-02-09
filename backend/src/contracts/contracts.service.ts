@@ -12,7 +12,7 @@ export class ContractsService {
   constructor(
     @InjectModel('Contract') private contractModel: Model<Contract>,
     private readonly projectsService: ProjectsService,
-    private readonly wpsService: WpsService
+    private readonly wpsService: WpsService,
   ) {}
 
   async create(createContractDto: CreateContractDto) {
