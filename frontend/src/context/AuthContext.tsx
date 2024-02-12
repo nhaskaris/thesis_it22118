@@ -18,6 +18,7 @@ interface MyComponentProps {
 const AuthContext = createContext(
     {} as {
         user: any;
+        loading: boolean;
         googleSignIn: () => void;
         logOut: () => void;
         photoUrl: string | null;
@@ -26,6 +27,7 @@ const AuthContext = createContext(
 
 export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const googleSignIn = async() => {
     const provider = new GoogleAuthProvider();
@@ -43,12 +45,13 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL}}>
+    <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading}}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,22 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    env: {
+        API_KEY: "",
+        AUTH_DOMAIN: "",
+        PROJECT_ID: "",
+        STORAGE_BUCKET: "",
+        MESSAGING_SENDER_ID: "",
+        APP_ID: "",
+        MEASUREMENT_ID: "",
+    },
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com'
+            }
+        ]
+    }
+};
 
 export default nextConfig;
