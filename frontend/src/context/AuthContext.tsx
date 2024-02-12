@@ -8,6 +8,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
   Auth,
+  User,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 
@@ -17,7 +18,7 @@ interface MyComponentProps {
 
 const AuthContext = createContext(
     {} as {
-        user: any;
+        user: User | null;
         loading: boolean;
         googleSignIn: () => void;
         logOut: () => void;
@@ -26,7 +27,7 @@ const AuthContext = createContext(
 );
 
 export const AuthContextProvider = ({ children }: MyComponentProps) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const googleSignIn = async() => {
