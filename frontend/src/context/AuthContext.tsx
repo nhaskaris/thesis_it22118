@@ -11,6 +11,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
+import { useRouter } from "next/navigation";
 
 interface MyComponentProps {
     children: React.ReactNode;
@@ -30,10 +31,18 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+
   const googleSignIn = async() => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithRedirect(auth, provider);
+
+      const result = await getRedirectResult(auth);
+
+      if (result) {
+        console.log(result)
+      }
     } catch (error) {
       console.error(error);
     }
@@ -41,11 +50,18 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
   const logOut = () => {
     signOut(auth);
+
+    router.push('/')
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (!auth) {
+        router.push('/')
+      } else {
+        setUser(currentUser);
+      }
+
       setLoading(false);
     });
     return () => unsubscribe();
