@@ -29,14 +29,11 @@ export class ProjectsService {
   }
 
   findAll() {
-    return this.projectModel.find().populate('wp', null, Wp.name).exec();
+    return this.projectModel.find().populate('wps', null, Wp.name).exec();
   }
 
   findOne(id: string) {
-    return this.projectModel
-      .findById(id)
-      .populate('wp', null, Wp.name)
-      .exec();
+    return this.projectModel.findById(id).populate('wps', null, Wp.name).exec();
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {

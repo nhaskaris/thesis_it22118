@@ -4,14 +4,21 @@ import { ProjectsController } from './projects.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectSchema, Project } from './schemas/projects.schemas';
 import { WpsModule } from 'src/wps/wps.module';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
-    WpsModule
+    WpsModule,
   ],
   controllers: [ProjectsController],
-  providers: [ProjectsService],
-  exports: [ProjectsService]
+  providers: [
+    ProjectsService,
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

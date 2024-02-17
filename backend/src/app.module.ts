@@ -6,6 +6,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectsModule } from './projects/projects.module';
 import { HumansModule } from './humans/humans.module';
 import { ContractsModule } from './contracts/contracts.module';
+import { MiddlewareConsumer } from '@nestjs/common/interfaces/middleware';
+import { AuthMiddleware } from './auth/auth.middleware';
+import { ConfigModule } from '@nestjs/config';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
@@ -14,8 +18,15 @@ import { ContractsModule } from './contracts/contracts.module';
     ProjectsModule,
     HumansModule,
     ContractsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: 'APP_GUARD', useValue: AuthGuard }],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}
