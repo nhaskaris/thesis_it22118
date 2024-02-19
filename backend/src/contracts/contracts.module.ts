@@ -5,23 +5,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Contract, ContractSchema } from './schemas/contracts.schema';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { WpsModule } from 'src/wps/wps.module';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Contract.name, schema: ContractSchema },
-    ]),
-    ProjectsModule,
-    WpsModule,
-  ],
-  controllers: [ContractsController],
-  providers: [
-    ContractsService,
-    {
-      provide: 'APP_GUARD',
-      useClass: AuthGuard,
-    },
-  ],
+   imports: [
+      MongooseModule.forFeature([
+         { name: Contract.name, schema: ContractSchema },
+      ]),
+      ProjectsModule,
+      WpsModule,
+   ],
+   controllers: [ContractsController],
+   providers: [ContractsService],
 })
 export class ContractsModule {}

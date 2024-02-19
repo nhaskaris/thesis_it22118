@@ -9,29 +9,29 @@ export type ContractDocument = Contract & mongoose.HydratedDocument<Contract>;
 
 @Schema()
 export class Contract {
-  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' } })
-  project: Project;
+   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' } })
+   project: Project;
 
-  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Human' } })
-  human: Human;
+   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Human' } })
+   human: Human;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' }] })
-  wps: Wp[];
+   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' }] })
+   wps: Wp[];
 
-  @Prop(
-    raw({
-      startDate: { type: String },
-      endDate: { type: String },
-      _id: false,
-    }),
-  )
-  duration: Interval;
+   @Prop(
+      raw({
+         startDate: { type: String },
+         endDate: { type: String },
+         _id: false,
+      }),
+   )
+   duration: Interval;
 
-  @Prop()
-  hourlyRate: number;
+   @Prop()
+   hourlyRate: number;
 
-  @Prop()
-  totalCost: number;
+   @Prop()
+   totalCost: number;
 }
 
 export const ContractSchema = SchemaFactory.createForClass(Contract);

@@ -41,3 +41,4 @@ lerna-debug.log*
 .env.development
 .env.test
 .env.production
+private_key*

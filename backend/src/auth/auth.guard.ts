@@ -1,45 +1,62 @@
 import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
+   CanActivate,
+   ExecutionContext,
+   Injectable,
+   UnauthorizedException,
 } from '@nestjs/common';
-import { initializeApp } from 'firebase-admin';
 import { IGetUserAuthInfoRequest } from 'src/types/userAuthInfoRequest';
-import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from './auth.decorator';
+import { AuthService } from './auth.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private configService: ConfigService) {}
+   constructor(
+      private reflector: Reflector,
+      private readonly authService: AuthService,
+      private readonly usersService: UsersService,
+   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context
-      .switchToHttp()
-      .getRequest<IGetUserAuthInfoRequest>();
-    const token = request.headers['authorization']?.split(' ')[1];
-    if (!token) {
-      throw new UnauthorizedException('Unauthorized');
-    }
+   async canActivate(context: ExecutionContext): Promise<boolean> {
+      const request = context
+         .switchToHttp()
+         .getRequest<IGetUserAuthInfoRequest>();
 
-    const firebaseConfig = {
-      apiKey: this.configService.get('API_KEY'),
-      authDomain: this.configService.get('AUTH_DOMAIN'),
-      projectId: this.configService.get('PROJECT_ID'),
-      storageBucket: this.configService.get('STORAGE_BUCKET'),
-      messagingSenderId: this.configService.get('MESSAGING_SENDER_ID'),
-      appId: this.configService.get('APP_ID'),
-      measurementId: this.configService.get('MEASUREMENT_ID'),
-    };
+      const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+         ROLES_KEY,
+         [context.getHandler(), context.getClass()],
+      );
 
-    const firebaseApp = initializeApp(firebaseConfig);
+      const token = request.headers['authorization']?.split(' ')[1];
+      if (!token) {
+         throw new UnauthorizedException('Unauthorized');
+      }
 
-    try {
-      const uid = (await firebaseApp.auth().verifyIdToken(token)).uid;
-      request['uid'] = uid;
-    } catch (error) {
-      throw new UnauthorizedException('Unauthorized');
-    }
+      try {
+         const uid = (
+            await this.authService.firebaseApp.auth().verifyIdToken(token)
+         ).uid;
 
-    return true;
-  }
+         if (!requiredRoles) {
+            return true;
+         }
+
+         const user = await this.usersService.findOne(uid);
+
+         if (!user) {
+            throw new UnauthorizedException('Unauthorized');
+         }
+
+         //requiredRoles is an array of roles that are allowed to access the route
+
+         request.user = user;
+
+         return requiredRoles.includes(user.role);
+      } catch (error) {
+         throw new UnauthorizedException('Unauthorized');
+      }
+
+      return true;
+   }
 }

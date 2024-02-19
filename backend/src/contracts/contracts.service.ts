@@ -9,39 +9,39 @@ import { WpsService } from 'src/wps/wps.service';
 
 @Injectable()
 export class ContractsService {
-  constructor(
-    @InjectModel('Contract') private contractModel: Model<Contract>,
-    private readonly projectsService: ProjectsService,
-    private readonly wpsService: WpsService,
-  ) {}
+   constructor(
+      @InjectModel('Contract') private contractModel: Model<Contract>,
+      private readonly projectsService: ProjectsService,
+      private readonly wpsService: WpsService,
+   ) {}
 
-  async create(createContractDto: CreateContractDto) {
-    const ids = [];
-    for (const wp of createContractDto.wps) {
-      ids.push(await this.wpsService.create(wp));
-    }
+   async create(createContractDto: CreateContractDto) {
+      const ids = [];
+      for (const wp of createContractDto.wps) {
+         ids.push(await this.wpsService.create(wp));
+      }
 
-    const createdContract = new this.contractModel({
-      ...createContractDto,
-      wps: ids,
-    });
+      const createdContract = new this.contractModel({
+         ...createContractDto,
+         wps: ids,
+      });
 
-    return createdContract.save();
-  }
+      return createdContract.save();
+   }
 
-  findAll() {
-    return `This action returns all contracts`;
-  }
+   findAll() {
+      return `This action returns all contracts`;
+   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} contract`;
-  }
+   findOne(id: string) {
+      return `This action returns a #${id} contract`;
+   }
 
-  update(id: string, updateContractDto: UpdateContractDto) {
-    return `This action updates a #${id} contract`;
-  }
+   update(id: string, updateContractDto: UpdateContractDto) {
+      return `This action updates a #${id} contract`;
+   }
 
-  remove(id: string) {
-    return `This action removes a #${id} contract`;
-  }
+   remove(id: string) {
+      return `This action removes a #${id} contract`;
+   }
 }

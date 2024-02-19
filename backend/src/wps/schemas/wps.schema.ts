@@ -6,19 +6,19 @@ export type WpDocument = HydratedDocument<Wp>;
 
 @Schema()
 export class Wp {
-  @Prop()
-  title: string;
+   @Prop()
+   title: string;
 
-  @Prop(
-    raw([
-      {
-        startDate: { type: String },
-        endDate: { type: String },
-        _id: false,
-      },
-    ]),
-  )
-  activeIntervals: Interval[];
+   @Prop(
+      raw([
+         {
+            startDate: { type: String },
+            endDate: { type: String },
+            _id: false,
+         },
+      ]),
+   )
+   activeIntervals: Interval[];
 }
 
 export const WpSchema = SchemaFactory.createForClass(Wp);
