@@ -1,6 +1,4 @@
-export default function Home(props: any) {
-  return (
-    <main>
-    </main>
-  );
+export default async function Home(props: any) {
+  return <main>
+  </main>
 }
