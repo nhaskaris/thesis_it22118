@@ -9,6 +9,7 @@ import { Project } from 'src/projects/schemas/projects.schemas';
 import { Human } from 'src/humans/schemas/humans.schema';
 import { Wp } from 'src/wps/schemas/wps.schema';
 import { Contract } from 'src/contracts/schemas/contracts.schema';
+import { InsertUserInfoDto } from './dto/insert-info-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -60,13 +61,42 @@ export class UsersService {
          .exec();
    }
 
+   // TODO
    update(uid: string, updateUserDto: UpdateUserDto) {
-      return `This action updates a #${uid} user with ${JSON.stringify(
-         updateUserDto,
-      )}`;
+      const updateUser = new this.userModel(updateUserDto);
+      return this.userModel.updateOne({ uid }, updateUser);
    }
 
    remove(uid: string) {
       return this.userModel.deleteOne({ uid }).exec();
+   }
+
+   // TODO: Need to check if whatever the user is trying to insert is already in the database or not. Create it or insert id.
+   async insertInfo(uid: string, insertUserInfoDto: InsertUserInfoDto) {
+      //we need to check if the user has given us a project, human, wp or contract
+
+      const user = await this.userModel.findOne({ uid }).exec();
+
+      if (!user) {
+         return;
+      }
+
+      if (insertUserInfoDto.projects) {
+         user.projects.push(insertUserInfoDto.projects);
+      }
+
+      if (insertUserInfoDto.humans) {
+         user.humans.push(insertUserInfoDto.humans);
+      }
+
+      if (insertUserInfoDto.wps) {
+         user.wps.push(insertUserInfoDto.wps);
+      }
+
+      if (insertUserInfoDto.contracts) {
+         user.contracts.push(insertUserInfoDto.contracts);
+      }
+
+      return user.save();
    }
 }

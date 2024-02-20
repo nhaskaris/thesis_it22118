@@ -14,6 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from 'src/auth/auth.decorator';
 import { Role } from 'src/types/role.enum';
 import { IGetUserAuthInfoRequest } from 'src/types/userAuthInfoRequest';
+import { InsertUserInfoDto } from './dto/insert-info-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -32,15 +33,24 @@ export class UsersController {
    }
 
    @Roles(Role.Admin)
-   @Patch(':id')
-   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-      return this.usersService.update(id, updateUserDto);
+   @Patch(':uid')
+   update(@Param('uid') uid: string, @Body() updateUserDto: UpdateUserDto) {
+      return this.usersService.update(uid, updateUserDto);
+   }
+
+   @Roles(Role.User, Role.Admin)
+   @Post(':uid')
+   insertInfo(
+      @Param('uid') uid: string,
+      @Body() insertUserInfoDto: InsertUserInfoDto,
+   ) {
+      return this.usersService.insertInfo(uid, insertUserInfoDto);
    }
 
    @Roles(Role.Admin)
-   @Delete(':id')
-   remove(@Param('id') id: string) {
-      return this.usersService.remove(id);
+   @Delete(':uid')
+   remove(@Param('uid') uid: string) {
+      return this.usersService.remove(uid);
    }
 
    @Roles(Role.User, Role.Admin)
