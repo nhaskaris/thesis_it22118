@@ -21,11 +21,11 @@ function Header() {
                 id="navbarSupportedContent1"
                 data-te-collapse-item>
                     <Link href={`/`}>
-                        <button type='button' className='mr-5' color="inherit">Home</button>
+                        <button type='button' className='mr-5 text-white'>Home</button>
                     </Link>
                     {pages.map((page) => (
                     <Link href={`/${page.toLowerCase()}`} key={page}>
-                        <button type='button' className='mr-5' color="inherit">{page}</button>
+                        <button type='button' className='mr-5 text-white'>{page}</button>
                     </Link>
                 ))}  
                 </div>
@@ -54,7 +54,7 @@ function Header() {
                         <a
                         className="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none"
                         aria-expanded="false">
-                        <button type='button' className='mr-2' onClick={logOut}>Logout</button>
+                        <button type='button' className='mr-2 text-white' onClick={logOut}>Logout</button>
                         <Image
                             src={photoUrl as string}
                             className="rounded-full"

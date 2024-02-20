@@ -1,5 +1,3 @@
-import { NextPageContext } from 'next'
-import { useRouter } from "next/navigation";
 import { cookies } from 'next/headers'
 import Alert from '@/components/Alert';
 
@@ -17,15 +15,14 @@ export async function getData() {
 
     const res = await fetch('http://localhost:8080/users/getProfile', {
         headers: {
-            authorization: userCookies.value!
+            authorization: 'Bearer ' + userCookies.value!
         }
     }).catch(err => {
-        return err.message;
+        return err.statusText;
     })
 
-
     if (!res.ok) {
-        return (<Alert message={res} severity={'critical'} />)
+        return (<Alert message={res.statusText} severity={'critical'} />)
     }
     
     const data = await res.json()
@@ -34,11 +31,9 @@ export async function getData() {
 }
 
 
-export default async function Home(props: any) {
-    const data = await getData()
+export default async function Home() {
     return (
         <div>
-            {data}
         </div>
     )
 }
