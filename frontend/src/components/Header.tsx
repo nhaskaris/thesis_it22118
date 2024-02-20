@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import {useState, useEffect} from 'react';
 import Link from "next/link";
 import { UserAuth } from '@/context/AuthContext';
 import Image from 'next/image';
@@ -62,7 +61,8 @@ function Header() {
                             alt={user.displayName as string}
                             width={40}
                             height={40}
-                            loading="lazy" />
+                            loading="lazy" 
+                            title={user.displayName!}/>
                         </a>
                     </div>
                 </div>
