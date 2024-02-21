@@ -1,10 +1,10 @@
 import { Project } from "@/types/pages"
 
-export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
   const formatUnixTimestamp = (timestamp: string): string => {
     return new Date(parseInt(timestamp) * 1000).toLocaleDateString();
   };
-
+  //need to create a new use client element for deleting a project
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
       <h1 className="text-xl font-bold mb-2">{project.title}</h1>

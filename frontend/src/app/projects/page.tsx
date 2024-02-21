@@ -1,4 +1,4 @@
-import {ProjectCard} from "../../components/ProjectCard"
+import ProjectCard from "../../components/ProjectCard"
 import { cookies } from 'next/headers'
 import { Project } from '../../types/pages';
 import { redirect } from 'next/navigation';
