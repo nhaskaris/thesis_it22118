@@ -10,5 +10,6 @@ import { Human, HumanSchema } from './schemas/humans.schema';
    ],
    controllers: [HumansController],
    providers: [HumansService],
+   exports: [HumansService]
 })
 export class HumansModule {}

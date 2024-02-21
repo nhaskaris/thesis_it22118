@@ -4,8 +4,8 @@ import { Project } from 'src/projects/schemas/projects.schemas';
 import { Wp } from 'src/wps/schemas/wps.schema';
 
 export class InsertUserInfoDto {
-   projects?: Project;
-   contracts?: Contract;
-   humans?: Human;
-   wps?: Wp;
+   project?: Project;
+   contract?: Contract;
+   human?: Human;
+   wp?: Wp;
 }

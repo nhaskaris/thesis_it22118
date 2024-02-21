@@ -17,7 +17,7 @@ function Header() {
         <div className="flex w-full flex-wrap items-center justify-between px-3">
             {user ? (
                 <div
-                className="!visible hidden flex-grow basis-[100%] items-center lg:!flex lg:basis-auto"
+                className="flex-grow basis-[100%] items-center lg:!flex lg:basis-auto"
                 id="navbarSupportedContent1"
                 data-te-collapse-item>
                     <Link href={`/`}>
@@ -31,7 +31,7 @@ function Header() {
                 </div>
             ): !loading && (
                 <div className="relative flex items-center ml-auto">
-                    <button onClick={googleSignIn}>Sign in</button>
+                    <button onClick={googleSignIn} className='text-white'>Sign in</button>
                 </div>
             )}
 

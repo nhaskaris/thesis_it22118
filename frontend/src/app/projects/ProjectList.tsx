@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { Project } from '../types/pages';
+import { redirect } from 'next/navigation';
 
 export async function getData() {
     const userCookies = cookies().get('token')
@@ -21,13 +22,12 @@ export async function getData() {
         return err.statusText;
     })
 
+    if(!res) {
+        redirect('/')
+    }
+
     if (!res.ok) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: true
-            }
-        }
+        redirect('/')
     }
     
     const data = await res.json();
@@ -37,7 +37,7 @@ export async function getData() {
 
 export default async function ProjectList() {
     const projects: Project[] = await getData()
-
+    
     return (
         <div>
             {projects.map((project) => (
