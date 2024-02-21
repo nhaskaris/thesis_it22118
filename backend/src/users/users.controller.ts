@@ -39,12 +39,12 @@ export class UsersController {
    }
 
    @Roles(Role.User, Role.Admin)
-   @Post(':uid')
+   @Post('insertInfo')
    insertInfo(
-      @Param('uid') uid: string,
       @Body() insertUserInfoDto: InsertUserInfoDto,
+      @Req() request: IGetUserAuthInfoRequest,
    ) {
-      return this.usersService.insertInfo(uid, insertUserInfoDto);
+      return this.usersService.insertInfo(request.user!.uid, insertUserInfoDto);
    }
 
    @Roles(Role.Admin)

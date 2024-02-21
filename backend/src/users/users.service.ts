@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/users.schemas';
 import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
-import { Project } from 'src/projects/schemas/projects.schemas';
 import { Human } from 'src/humans/schemas/humans.schema';
 import { Wp } from 'src/wps/schemas/wps.schema';
 import { Contract } from 'src/contracts/schemas/contracts.schema';
@@ -23,7 +22,7 @@ export class UsersService {
       private projectsService: ProjectsService,
       private humansService: HumansService,
       private contractsService: ContractsService,
-      private wpsService: WpsService
+      private wpsService: WpsService,
    ) {}
 
    async create(createUserDto: CreateUserDto) {
@@ -62,7 +61,13 @@ export class UsersService {
    async findOne(uid: string) {
       return await this.userModel
          .findOne({ uid })
-         .populate('projects', null, Project.name)
+         .populate({
+            path: 'projects',
+            populate: {
+               path: 'wps',
+               model: Wp.name,
+            },
+         })
          .populate('humans', null, Human.name)
          .populate('wps', null, Wp.name)
          .populate('contracts', null, Contract.name)
@@ -85,27 +90,33 @@ export class UsersService {
       if (!user) {
          return;
       }
-      
-      if (insertUserInfoDto.project) {         
-         const newProject = await this.projectsService.create(insertUserInfoDto.project);
+
+      if (insertUserInfoDto.project) {
+         const newProject = await this.projectsService.create(
+            insertUserInfoDto.project,
+         );
 
          user.projects.push(newProject);
       }
 
       if (insertUserInfoDto.human) {
-         const newHuman = await this.humansService.create(insertUserInfoDto.human)
+         const newHuman = await this.humansService.create(
+            insertUserInfoDto.human,
+         );
 
          user.humans.push(newHuman);
       }
 
       if (insertUserInfoDto.wp) {
-         const newWp = await this.wpsService.create(insertUserInfoDto.wp)
+         const newWp = await this.wpsService.create(insertUserInfoDto.wp);
 
          user.wps.push(newWp);
       }
 
       if (insertUserInfoDto.contract) {
-         const newContract = await this.contractsService.create(insertUserInfoDto.contract)
+         const newContract = await this.contractsService.create(
+            insertUserInfoDto.contract,
+         );
 
          user.contracts.push(newContract);
       }

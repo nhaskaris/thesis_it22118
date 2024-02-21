@@ -1,12 +1,18 @@
 export interface Project {
-    id: number;
     title: string;
     description: string;
-    wp: any[];
+    wps: Wp[];
     interval: Interval;
+    _id: string;
 }
 
 export interface Interval {
     startDate: string;
     endDate: string;
+}
+
+export interface Wp {
+    title: string;
+    _id: string;
+    activeIntervals: Interval[];
 }
