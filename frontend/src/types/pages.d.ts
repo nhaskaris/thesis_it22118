@@ -3,7 +3,7 @@ export interface Project {
     description: string;
     wps: Wp[];
     interval: Interval;
-    _id: string;
+    _id?: string;
 }
 
 export interface Interval {
@@ -13,6 +13,6 @@ export interface Interval {
 
 export interface Wp {
     title: string;
-    _id: string;
+    _id?: string;
     activeIntervals: Interval[];
 }
