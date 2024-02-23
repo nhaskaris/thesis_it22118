@@ -16,3 +16,8 @@ export interface Wp {
     _id?: string;
     activeIntervals: Interval[];
 }
+
+export interface AlertInfo {
+    message: string;
+    severity: string;
+}
