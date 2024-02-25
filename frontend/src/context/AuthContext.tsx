@@ -23,12 +23,14 @@ const AuthContext = createContext(
         googleSignIn: () => void;
         logOut: () => void;
         photoUrl: string | null;
+        isAdmin: boolean;
     }
 );
 
 export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const router = useRouter();
 
@@ -60,6 +62,10 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         let token = await currentUser?.getIdToken();
 
+        const role = (await currentUser?.getIdTokenResult())?.claims.admin;
+
+        setIsAdmin(!!role);
+
         token = token ? token : '';
 
         setCookie(null, 'token', token);
@@ -71,7 +77,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   }, [router, user]);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading}}>
+    <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading, isAdmin}}>
       {children}
     </AuthContext.Provider>
   );

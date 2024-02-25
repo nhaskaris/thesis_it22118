@@ -4,14 +4,9 @@ import { DeleteButton } from "./DeleteButton";
 //for each work package, we want to display the title of the work package and the interval of the work package
 const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
   const formatUnixTimestamp = (timestamp: string): string => {
-    return new Date(parseInt(timestamp) * 1000).toLocaleDateString();
+    return new Date(parseInt(timestamp)).toLocaleDateString();
   };
 
-  const handleDelete = async (id: string) => {
-    console.log('delete project with id:', id);
-  }
-
-  //need to create a new use client element for deleting a project
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
       <h1 className="text-xl font-bold mb-2">{project.title}</h1>
@@ -42,7 +37,7 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
           </p>
         </div>
       </div>
-      <DeleteButton id={project._id!} url="/projects/api"/>
+      <DeleteButton id={project._id!} endpoint="projects"/>
     </div>
   );
 };

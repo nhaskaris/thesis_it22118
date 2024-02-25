@@ -2,17 +2,17 @@
 
 interface DeleteButtonProps {
     id: string;
-    url: string;
+    endpoint: string;
 }
 
 export const DeleteButton = (props: DeleteButtonProps) => {
     const handleDelete = async() => {
-        const res = await fetch(props.url, {
+        const res = await fetch('/api', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({id: props.id}),
+            body: JSON.stringify({id: props.id, endpoint: props.endpoint}),
         })
 
         //reload the page

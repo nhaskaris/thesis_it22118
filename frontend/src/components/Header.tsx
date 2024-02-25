@@ -8,7 +8,7 @@ import Image from 'next/image';
 const pages = ['Projects', 'Contracts', 'Timesheets', 'People'];
 
 function Header() {
-  const { user, googleSignIn, logOut, photoUrl, loading } = UserAuth();
+  const { user, googleSignIn, logOut, photoUrl, loading, isAdmin } = UserAuth();
 
 
   return (
@@ -27,7 +27,12 @@ function Header() {
                     <Link href={`/${page.toLowerCase()}`} key={page}>
                         <button type='button' className='mr-5 text-white'>{page}</button>
                     </Link>
-                ))}  
+                    ))}
+                    {isAdmin && (
+                    <Link href={`/users`}>
+                        <button type='button' className='mr-5 text-white'>Users</button>
+                    </Link>
+                    )}
                 </div>
             ): !loading && (
                 <div className="relative flex items-center ml-auto">
@@ -47,7 +52,7 @@ function Header() {
             </div>
             )}
 
-            {user ? (
+            {user && (
                 <div className="relative flex items-center" data-te-dropdown-alignment="end">
                     <div
                         className="relative">
@@ -66,7 +71,7 @@ function Header() {
                         </a>
                     </div>
                 </div>
-            ): ('')}
+            )}
         </div>
     </nav>
   );

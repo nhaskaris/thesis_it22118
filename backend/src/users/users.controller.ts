@@ -7,6 +7,8 @@ import {
    Param,
    Delete,
    Req,
+   HttpException,
+   HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,8 +30,8 @@ export class UsersController {
 
    @Roles(Role.Admin)
    @Get()
-   findAll() {
-      return this.usersService.findAll();
+   findAll(@Req() request: IGetUserAuthInfoRequest) {
+      return this.usersService.findAll(request.user!.uid);
    }
 
    @Roles(Role.Admin)
@@ -44,13 +46,23 @@ export class UsersController {
       @Body() insertUserInfoDto: InsertUserInfoDto,
       @Req() request: IGetUserAuthInfoRequest,
    ) {
-      return this.usersService.insertInfo(request.user!.uid, insertUserInfoDto);
+      try {
+         return this.usersService.insertInfo(
+            request.user!.uid,
+            insertUserInfoDto,
+         );
+      } catch (error) {
+         throw new HttpException(
+            error.message,
+            error.status || HttpStatus.BAD_REQUEST,
+         );
+      }
    }
 
    @Roles(Role.Admin)
-   @Delete(':uid')
-   remove(@Param('uid') uid: string) {
-      return this.usersService.remove(uid);
+   @Delete(':id')
+   remove(@Param('id') id: string) {
+      return this.usersService.remove(id);
    }
 
    @Roles(Role.User, Role.Admin)

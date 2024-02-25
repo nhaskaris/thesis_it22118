@@ -16,7 +16,7 @@ import { HumansModule } from 'src/humans/humans.module';
       ProjectsModule,
       ContractsModule,
       WpsModule,
-      HumansModule
+      HumansModule,
    ],
    controllers: [UsersController],
    providers: [UsersService],

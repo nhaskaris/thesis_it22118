@@ -13,6 +13,7 @@ import { ProjectsService } from 'src/projects/projects.service';
 import { HumansService } from 'src/humans/humans.service';
 import { ContractsService } from 'src/contracts/contracts.service';
 import { WpsService } from 'src/wps/wps.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -28,12 +29,22 @@ export class UsersService {
    async create(createUserDto: CreateUserDto) {
       const createdUser = new this.userModel(createUserDto);
 
+      const generatePassword = (
+         length = 30,
+         characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@',
+      ) =>
+         Array.from(crypto.randomFillSync(new Uint32Array(length)))
+            .map((x) => characters[x % characters.length])
+            .join('');
+
+      const password = generatePassword();
+
       const user = await this.authService.firebaseApp
          .auth()
          .createUser({
             email: createUserDto.email,
             emailVerified: false,
-            password: createUserDto.password,
+            password: password,
             disabled: false,
             displayName: '',
          })
@@ -49,13 +60,22 @@ export class UsersService {
          return;
       }
 
+      this.authService.firebaseApp.auth().setCustomUserClaims(user.uid, {
+         admin: createUserDto.role == 'admin',
+      });
+
       createdUser.uid = user.uid;
 
       return createdUser.save();
    }
 
-   async findAll() {
-      return await this.userModel.find().exec();
+   async findAll(uid: string) {
+      const users = await this.userModel.find().exec();
+
+      //remove the user with the uid given
+      const filteredUsers = users.filter((user) => user.uid !== uid);
+
+      return filteredUsers;
    }
 
    async findOne(uid: string) {
@@ -80,8 +100,8 @@ export class UsersService {
       return this.userModel.updateOne({ uid }, updateUser);
    }
 
-   remove(uid: string) {
-      return this.userModel.deleteOne({ uid }).exec();
+   async remove(_id: string) {
+      return await this.userModel.deleteOne({ _id }).exec();
    }
 
    async insertInfo(uid: string, insertUserInfoDto: InsertUserInfoDto) {
@@ -103,7 +123,6 @@ export class UsersService {
          const newHuman = await this.humansService.create(
             insertUserInfoDto.human,
          );
-
          user.humans.push(newHuman);
       }
 

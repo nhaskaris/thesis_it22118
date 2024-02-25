@@ -21,7 +21,7 @@ const NewProjectPage: React.FC = () => {
 
   // Function to display the alert
   const showAlert = (message: string, severity: string) => {
-    setAlert({ message, severity });
+    setAlert({ message, severity, visible: true, onClose: () => setAlert(null)});
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -71,10 +71,19 @@ const NewProjectPage: React.FC = () => {
     setWorkPackages(updatedWorkPackages);
   };
 
-  const isValidateDate = (date: string) => {
-    if(Number.isNaN(new Date(date))) return false
-
-    return true;
+  const parseDateToTimestamp = (dateString: string) => {
+    const match = dateString.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (match) {
+      const day = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1; // Months are 0-based in JavaScript Date object
+      const year = parseInt(match[3], 10);
+      
+      // Check if the parsed date components are valid
+      if (month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+        return new Date(year, month, day).getTime(); // Return Unix timestamp in milliseconds
+      }
+    }
+    return null; // Return null if parsing fails or date components are invalid
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -88,26 +97,39 @@ const NewProjectPage: React.FC = () => {
 
     for (const wp of newProject.wps) {
       for (const interval of wp.activeIntervals) {
-        if (!isValidateDate(interval.startDate) || !isValidateDate(interval.endDate)) {
-          return showAlert('Invalid date format. Use dd-mm-yyyy', 'critical');
+        const startDate = parseDateToTimestamp(interval.startDate);
+        const endDate = parseDateToTimestamp(interval.endDate);
+
+        if (startDate && endDate) {
+          interval.startDate = String(startDate);
+          interval.endDate = String(endDate);
+        } else {
+          return showAlert('Invalid date format. Use dd/mm/yyyy', 'critical');
         }
       }
     }
 
-    if (!isValidateDate(newProject.interval.startDate) || !isValidateDate(newProject.interval.endDate)) {
-      return showAlert('Invalid date format. Use dd-mm-yyyy', 'critical');
+    const startDate = parseDateToTimestamp(newProject.interval.startDate);
+    const endDate = parseDateToTimestamp(newProject.interval.endDate);
+
+    if (!startDate || !endDate) {
+      return showAlert('Invalid date format. Use dd/mm/yyyy', 'critical');
     }
+
+    //convert to Unix time
+    newProject.interval.startDate = String(endDate);
+    newProject.interval.endDate = String(endDate);
     
-    const res = await fetch('/projects/api', { 
+    const res = await fetch('/api', { 
         method: 'POST', 
-        body: JSON.stringify(newProject), 
+        body: JSON.stringify({"project": newProject}), 
         headers: { 
             'Content-Type': 'application/json' 
         }
-    })
+    });
 
     if (!res.ok) {
-      return showAlert('Failed to create project', 'critical');
+      return showAlert(res.statusText, 'critical');
     }
 
     router.push('/projects')
@@ -274,7 +296,7 @@ const NewProjectPage: React.FC = () => {
           </button>
         </div>
         <div>
-          {alert && <Alert message={alert.message} severity={alert.severity} />}
+          {alert && <Alert message={alert.message} severity={alert.severity} visible={alert.visible} onClose={alert.onClose}/>}
         </div>
       </form>
     </div>

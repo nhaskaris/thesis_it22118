@@ -37,7 +37,15 @@ async function run() {
             return firebaseApp.auth().getUserByEmail(adminEmail);
          }
       });
-   console.log(process.env.MONGO_URL);
+
+   if (!user) {
+      return;
+   }
+
+   await firebaseApp.auth().setCustomUserClaims(user.uid, {
+      admin: true,
+   });
+
    await mongoose.connect(process.env.MONGO_URL);
 
    const UserSchema = new mongoose.Schema({
@@ -60,4 +68,6 @@ async function run() {
       role: 'admin',
       uid: user.uid,
    });
+
+   console.log(`Admin user created with email: ${adminEmail}`);
 }
