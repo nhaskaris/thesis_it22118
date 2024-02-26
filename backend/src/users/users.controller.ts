@@ -67,9 +67,13 @@ export class UsersController {
 
    @Roles(Role.User, Role.Admin)
    @Get('getProfile')
-   profile(@Req() request: IGetUserAuthInfoRequest) {
+   async profile(@Req() request: IGetUserAuthInfoRequest) {
       if (!request.user) {
          return;
+      }
+
+      if (request.user.role == 'admin') {
+         return await this.usersService.getAllInfo();
       }
 
       return request.user;

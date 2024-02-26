@@ -29,8 +29,8 @@ export class ContractsService {
       return createdContract.save();
    }
 
-   findAll() {
-      return `This action returns all contracts`;
+   async findAll() {
+      return await this.contractModel.find().exec();
    }
 
    findOne(id: string) {

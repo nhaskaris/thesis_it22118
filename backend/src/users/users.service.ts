@@ -142,4 +142,18 @@ export class UsersService {
 
       return user.save();
    }
+
+   async getAllInfo() {
+      const info = {
+         "projects": [],
+         "contracts": [],
+         "humans": [],
+      }
+
+      info.projects = await this.projectsService.findAll();
+      info.contracts = await this.contractsService.findAll();
+      info.humans = await this.humansService.findAll();
+
+      return info;
+   }
 }
