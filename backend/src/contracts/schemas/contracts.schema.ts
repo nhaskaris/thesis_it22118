@@ -9,10 +9,10 @@ export type ContractDocument = Contract & mongoose.HydratedDocument<Contract>;
 
 @Schema()
 export class Contract {
-   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' } })
+   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Project' })
    project: Project;
 
-   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Human' } })
+   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Human' })
    human: Human;
 
    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' }] })

@@ -16,6 +16,6 @@ import { WpsModule } from 'src/wps/wps.module';
    ],
    controllers: [ContractsController],
    providers: [ContractsService],
-   exports: [ContractsService]
+   exports: [ContractsService],
 })
 export class ContractsModule {}

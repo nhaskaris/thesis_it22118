@@ -7,13 +7,13 @@ import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
 import { Human } from 'src/humans/schemas/humans.schema';
 import { Wp } from 'src/wps/schemas/wps.schema';
-import { Contract } from 'src/contracts/schemas/contracts.schema';
 import { InsertUserInfoDto } from './dto/insert-info-user.dto';
 import { ProjectsService } from 'src/projects/projects.service';
 import { HumansService } from 'src/humans/humans.service';
 import { ContractsService } from 'src/contracts/contracts.service';
 import { WpsService } from 'src/wps/wps.service';
 import * as crypto from 'crypto';
+import { InfoAdmin } from 'src/types/userAuthInfoRequest';
 
 @Injectable()
 export class UsersService {
@@ -90,7 +90,23 @@ export class UsersService {
          })
          .populate('humans', null, Human.name)
          .populate('wps', null, Wp.name)
-         .populate('contracts', null, Contract.name)
+         .populate({
+            path: 'contracts',
+            populate: [
+               {
+                  path: 'project',
+                  model: 'Project',
+               },
+               {
+                  path: 'human',
+                  model: 'Human',
+               },
+               {
+                  path: 'wps',
+                  model: 'Wp',
+               },
+            ],
+         })
          .exec();
    }
 
@@ -144,11 +160,12 @@ export class UsersService {
    }
 
    async getAllInfo() {
-      const info = {
-         "projects": [],
-         "contracts": [],
-         "humans": [],
-      }
+      const info: InfoAdmin = {
+         projects: [],
+         contracts: [],
+         humans: [],
+         wps: [],
+      };
 
       info.projects = await this.projectsService.findAll();
       info.contracts = await this.contractsService.findAll();

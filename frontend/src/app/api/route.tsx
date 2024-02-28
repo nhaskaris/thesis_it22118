@@ -62,3 +62,30 @@ export async function POST(request: Request) {
 
     return new Response(res.statusText);
 }
+
+export async function GET() {
+    const cookieStore = cookies()
+    const token = cookieStore.get('token')
+
+    const res = await fetch('http://localhost:8080/users/getProfile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: 'Bearer ' + token!.value
+        }
+    })
+
+    if(!res) {
+        return Response.json(res, {
+            status: 500,
+        });
+    }
+
+    if (!res.ok) {
+        return Response.json({message: res.body}, {
+            status: res.status,
+        });
+    }
+
+    return new Response(res.statusText);
+}

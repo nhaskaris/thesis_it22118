@@ -68,6 +68,8 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         token = token ? token : '';
 
+        destroyCookie(null, 'token');
+
         setCookie(null, 'token', token);
       }
 

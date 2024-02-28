@@ -1,11 +1,11 @@
-import { Contract } from 'src/contracts/schemas/contracts.schema';
+import { CreateContractDto } from 'src/contracts/dto/create-contract.dto';
 import { Human } from 'src/humans/schemas/humans.schema';
 import { Project } from 'src/projects/schemas/projects.schemas';
 import { Wp } from 'src/wps/schemas/wps.schema';
 
 export class InsertUserInfoDto {
    project?: Project;
-   contract?: Contract;
+   contract?: CreateContractDto;
    human?: Human;
    wp?: Wp;
 }

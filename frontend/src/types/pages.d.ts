@@ -43,9 +43,28 @@ export interface User {
     projects: Project[];
     humans: Human[];
     wps: Wp[];
+    contracts: Contract[]
 }
 
 export interface UserInsertInfo {
     email: string;
     role: string;
 }
+
+export interface Contract {
+    project: Project;
+    human: Human;
+    wps: Wp[];
+    duration: Interval;
+    hourlyRate: number;
+    totalCost: number;
+    _id?: string;
+}
+export interface CreateContractDto {
+    projectId: string;
+    human: Human;
+    wps: Wp[];
+    duration: Interval;
+    hourlyRate: number;
+    totalCost: number;
+ }

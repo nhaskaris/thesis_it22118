@@ -16,17 +16,9 @@ export class ContractsService {
    ) {}
 
    async create(createContractDto: CreateContractDto) {
-      const ids = [];
-      for (const wp of createContractDto.wps) {
-         ids.push(await this.wpsService.create(wp));
-      }
+      const createdContract = new this.contractModel(createContractDto);
 
-      const createdContract = new this.contractModel({
-         ...createContractDto,
-         wps: ids,
-      });
-
-      return createdContract.save();
+      return await createdContract.save();
    }
 
    async findAll() {
@@ -38,10 +30,10 @@ export class ContractsService {
    }
 
    update(id: string, updateContractDto: UpdateContractDto) {
-      return `This action updates a #${id} contract`;
+      return `This action updates a #${updateContractDto} contract`;
    }
 
-   remove(id: string) {
-      return `This action removes a #${id} contract`;
+   async remove(id: string) {
+      return await this.contractModel.deleteOne({ _id: id }).exec();
    }
 }

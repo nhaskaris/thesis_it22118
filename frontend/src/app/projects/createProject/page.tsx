@@ -72,18 +72,7 @@ const NewProjectPage: React.FC = () => {
   };
 
   const parseDateToTimestamp = (dateString: string) => {
-    const match = dateString.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (match) {
-      const day = parseInt(match[1], 10);
-      const month = parseInt(match[2], 10) - 1; // Months are 0-based in JavaScript Date object
-      const year = parseInt(match[3], 10);
-      
-      // Check if the parsed date components are valid
-      if (month >= 0 && month <= 11 && day >= 1 && day <= 31) {
-        return new Date(year, month, day).getTime(); // Return Unix timestamp in milliseconds
-      }
-    }
-    return null; // Return null if parsing fails or date components are invalid
+    return new Date(dateString).getTime()
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -104,7 +93,7 @@ const NewProjectPage: React.FC = () => {
           interval.startDate = String(startDate);
           interval.endDate = String(endDate);
         } else {
-          return showAlert('Invalid date format. Use dd/mm/yyyy', 'critical');
+          return showAlert('Invalid date format. Use dd/mm/yyyy', 'error');
         }
       }
     }
@@ -113,7 +102,7 @@ const NewProjectPage: React.FC = () => {
     const endDate = parseDateToTimestamp(newProject.interval.endDate);
 
     if (!startDate || !endDate) {
-      return showAlert('Invalid date format. Use dd/mm/yyyy', 'critical');
+      return showAlert('Invalid date format. Use dd/mm/yyyy', 'error');
     }
 
     //convert to Unix time
@@ -129,11 +118,10 @@ const NewProjectPage: React.FC = () => {
     });
 
     if (!res.ok) {
-      return showAlert(res.statusText, 'critical');
+      return showAlert(res.statusText, 'error');
     }
 
-    router.push('/projects')
-    router.refresh()
+    window.location.href = '/projects';
   };
 
   const handleCancel = () => {
@@ -183,7 +171,7 @@ const NewProjectPage: React.FC = () => {
             <div className="mb-2 ml-4">
               <label className="block text-sm font-medium text-white-700 mb-1">Start Date 1</label>
               <input
-                type="text"
+                type="date"
                 value={wp.activeIntervals[0] ? wp.activeIntervals[0].startDate : ''}
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'startDate', e.target.value)}
                 className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -191,7 +179,7 @@ const NewProjectPage: React.FC = () => {
               />
               <label className="block text-sm font-medium text-white-700 mb-1">End Date 1</label>
               <input
-                type="text"
+                type="date"
                 value={wp.activeIntervals[0] ? wp.activeIntervals[0].endDate : ''}
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'endDate', e.target.value)}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -202,7 +190,7 @@ const NewProjectPage: React.FC = () => {
               <div key={intervalIndex + 1} className="mb-2 ml-4">
                 <label className="block text-sm font-medium text-white-700 mb-1">Start Date {intervalIndex + 2}</label>
                 <input
-                  type="text"
+                  type="date"
                   value={interval.startDate}
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'startDate', e.target.value)}
                   className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -210,7 +198,7 @@ const NewProjectPage: React.FC = () => {
                 />
                 <label className="block text-sm font-medium text-white-700 mb-1">End Date {intervalIndex + 2}</label>
                 <input
-                  type="text"
+                  type="date"
                   value={interval.endDate}
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'endDate', e.target.value)}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -258,7 +246,7 @@ const NewProjectPage: React.FC = () => {
               Start Date of Project
             </label>
             <input
-              type="text"
+              type="date"
               id="intervalStart"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
               value={intervalStart}
@@ -271,7 +259,7 @@ const NewProjectPage: React.FC = () => {
             End Date of Project
             </label>
             <input
-              type="text"
+              type="date"
               id="intervalEnd"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
               value={intervalEnd}

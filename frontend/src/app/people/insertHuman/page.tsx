@@ -47,7 +47,7 @@ const NewHumanPage: React.FC = () => {
     });
     
     if (res.ok) {
-      router.push('/people');
+      window.location.href = '/people';
     } else {
       setAlert({ message: res.statusText, severity: 'error', visible: true, onClose: () => setAlert(null)});
     }
