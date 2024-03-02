@@ -44,7 +44,7 @@ const NewUserPage: React.FC = () => {
     // Redirect to the users page after successful creation
     
     router.refresh()
-    router.push('/users');
+    window.location.href = '/users';
   };
 
   const handleCancel = () => {
@@ -94,7 +94,7 @@ const NewUserPage: React.FC = () => {
             type="submit"
             className="w-1/2 ml-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Add Human
+            Add User
           </button>
         </div>
       </form>

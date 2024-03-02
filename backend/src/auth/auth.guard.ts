@@ -48,8 +48,6 @@ export class AuthGuard implements CanActivate {
             throw new UnauthorizedException('Unauthorized');
          }
 
-         //requiredRoles is an array of roles that are allowed to access the route
-
          request.user = user;
 
          return requiredRoles.includes(user.role);

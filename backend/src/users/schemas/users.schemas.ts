@@ -4,6 +4,7 @@ import { Project } from '../../projects/schemas/projects.schemas';
 import { Human } from '../../humans/schemas/humans.schema';
 import { Wp } from '../../wps/schemas/wps.schema';
 import { Contract } from 'src/contracts/schemas/contracts.schema';
+import { Timesheet } from 'src/timesheets/schemas/timesheets.schemas';
 
 export type UserDocument = User & mongoose.HydratedDocument<User>;
 
@@ -20,6 +21,11 @@ export class User {
 
    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' }] })
    contracts: Contract[];
+
+   @Prop({
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Timesheet' }],
+   })
+   timesheets: Timesheet[];
 
    @Prop()
    email: string;

@@ -14,6 +14,7 @@ import { ContractsService } from 'src/contracts/contracts.service';
 import { WpsService } from 'src/wps/wps.service';
 import * as crypto from 'crypto';
 import { InfoAdmin } from 'src/types/userAuthInfoRequest';
+import { TimesheetsService } from 'src/timesheets/timesheets.service';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
       private humansService: HumansService,
       private contractsService: ContractsService,
       private wpsService: WpsService,
+      private timesheetsService: TimesheetsService,
    ) {}
 
    async create(createUserDto: CreateUserDto) {
@@ -107,6 +109,23 @@ export class UsersService {
                },
             ],
          })
+         .populate({
+            path: 'timesheets',
+            populate: [
+               {
+                  path: 'project',
+                  model: 'Project',
+               },
+               {
+                  path: 'human',
+                  model: 'Human',
+               },
+               {
+                  path: 'wp',
+                  model: 'Wp',
+               },
+            ],
+         })
          .exec();
    }
 
@@ -156,6 +175,14 @@ export class UsersService {
          user.contracts.push(newContract);
       }
 
+      if (insertUserInfoDto.timesheet) {
+         const newTimesheet = await this.timesheetsService.create(
+            insertUserInfoDto.timesheet,
+         );
+
+         user.timesheets.push(newTimesheet);
+      }
+
       return user.save();
    }
 
@@ -165,11 +192,13 @@ export class UsersService {
          contracts: [],
          humans: [],
          wps: [],
+         timesheets: [],
       };
 
       info.projects = await this.projectsService.findAll();
       info.contracts = await this.contractsService.findAll();
       info.humans = await this.humansService.findAll();
+      info.timesheets = await this.timesheetsService.findAll();
 
       return info;
    }

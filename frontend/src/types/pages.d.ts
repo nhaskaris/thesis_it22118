@@ -43,7 +43,8 @@ export interface User {
     projects: Project[];
     humans: Human[];
     wps: Wp[];
-    contracts: Contract[]
+    contracts: Contract[];
+    timesheets: Timesheet[];
 }
 
 export interface UserInsertInfo {
@@ -60,11 +61,12 @@ export interface Contract {
     totalCost: number;
     _id?: string;
 }
-export interface CreateContractDto {
-    projectId: string;
+
+export interface Timesheet {
     human: Human;
-    wps: Wp[];
-    duration: Interval;
-    hourlyRate: number;
-    totalCost: number;
- }
+    project: Project;
+    wp: Wp;
+    date: string;
+    hours: number;
+    _id?: string;
+}

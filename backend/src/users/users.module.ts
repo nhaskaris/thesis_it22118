@@ -8,6 +8,7 @@ import { ProjectsModule } from 'src/projects/projects.module';
 import { ContractsModule } from 'src/contracts/contracts.module';
 import { WpsModule } from 'src/wps/wps.module';
 import { HumansModule } from 'src/humans/humans.module';
+import { TimesheetsModule } from 'src/timesheets/timesheets.module';
 
 @Module({
    imports: [
@@ -17,6 +18,7 @@ import { HumansModule } from 'src/humans/humans.module';
       ContractsModule,
       WpsModule,
       HumansModule,
+      TimesheetsModule,
    ],
    controllers: [UsersController],
    providers: [UsersService],

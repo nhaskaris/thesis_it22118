@@ -22,7 +22,12 @@ export class ContractsService {
    }
 
    async findAll() {
-      return await this.contractModel.find().exec();
+      return await this.contractModel
+         .find()
+         .populate('project')
+         .populate('human')
+         .populate('wps')
+         .exec();
    }
 
    findOne(id: string) {

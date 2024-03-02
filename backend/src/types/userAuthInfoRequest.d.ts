@@ -4,6 +4,7 @@ import { User } from 'src/users/schemas/users.schemas';
 import { Contract } from 'src/contracts/schemas/contracts.schemas';
 import { Wp } from 'src/wps/schemas/wps.schemas';
 import { Human } from 'src/humans/schemas/humans.schemas';
+import { Timesheet } from 'src/timesheets/schemas/timesheets.schemas';
 
 export interface IGetUserAuthInfoRequest extends Request {
    user?: User;
@@ -14,4 +15,5 @@ export interface InfoAdmin {
    contracts: Contract[];
    wps: Wp[];
    humans: Human[];
+   timesheets: Timesheet[];
 }
