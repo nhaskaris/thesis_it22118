@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Project } from '../../projects/schemas/projects.schemas';
 import { Human } from '../../humans/schemas/humans.schema';
-import { Wp } from '../../wps/schemas/wps.schema';
 import { Contract } from 'src/contracts/schemas/contracts.schema';
 import { Timesheet } from 'src/timesheets/schemas/timesheets.schemas';
 
@@ -15,9 +14,6 @@ export class User {
 
    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Human' }] })
    humans: Human[];
-
-   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' }] })
-   wps: Wp[];
 
    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' }] })
    contracts: Contract[];

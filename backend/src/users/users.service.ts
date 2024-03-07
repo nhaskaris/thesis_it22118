@@ -181,12 +181,6 @@ export class UsersService {
          user.humans.push(newHuman);
       }
 
-      if (insertUserInfoDto.wp) {
-         const newWp = await this.wpsService.create(insertUserInfoDto.wp);
-
-         user.wps.push(newWp);
-      }
-
       if (insertUserInfoDto.contract) {
          const newContract = await this.contractsService.create(
             insertUserInfoDto.contract,
