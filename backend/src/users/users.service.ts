@@ -136,6 +136,26 @@ export class UsersService {
    }
 
    async remove(_id: string) {
+      const user = await this.userModel.findOne({ _id }).exec();
+
+      if (!user) {
+         return;
+      }
+
+      await this.authService.firebaseApp.auth().deleteUser(user.uid);
+
+      for (const project of user.projects) {
+         await this.projectsService.remove(String(project));
+      }
+
+      for (const contract of user.contracts) {
+         await this.contractsService.remove(String(contract));
+      }
+
+      for (const timesheet of user.timesheets) {
+         await this.timesheetsService.remove(String(timesheet));
+      }
+
       return await this.userModel.deleteOne({ _id }).exec();
    }
 
