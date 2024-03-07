@@ -75,7 +75,21 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    //refresh token every 20 minutes
+    const refreshToken = async () => {
+      const token = await user?.getIdToken(true)!;
+
+      setCookie(null, 'token', token);
+    }
+
+    const interval = setInterval(refreshToken, 10 * 60 * 1000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+    
   }, [router, user]);
 
   return (
