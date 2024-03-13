@@ -8,33 +8,41 @@ const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
   };
 
   return (
-    <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
-      <h1 className="text-xl font-bold mb-2">
-        {contract.project.title} - {contract.human.firstName} {contract.human.lastName}
-      </h1>
-      <p className="text-gray-200 mb-2">
-        <strong>Duration:</strong> {formatUnixTimestamp(contract.duration.startDate)} - {formatUnixTimestamp(contract.duration.endDate)}
-      </p>
-      <p className="text-gray-200 mb-2">
-        <strong>Work Packages:</strong>
-        {contract.wps.map((wp, index) => (
-          <span key={wp._id}>
-            {wp.title}
-            {index < contract.wps.length - 1 ? ", " : ""}
-          </span>
-        ))}
-      </p>
-      <div className="flex justify-between items-center">
-        <p className="text-gray-200">
-          <strong>Hourly Rate:</strong> €{contract.hourlyRate}
-        </p>
-        <p className="text-gray-200">
-          <strong>Total Cost:</strong> €{contract.totalCost}
-        </p>
-      </div>
-      {/* Assuming endpoint and id are defined for contracts */}
-      <DeleteButton id={contract._id!} endpoint="contracts" />
-    </div>
+        <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
+          <div className="px-6 py-4">
+              <div className="flex items-center justify-between mb-4">
+                  <div className="text-lg font-bold text-gray-400 ">Contract Entry</div>
+                  <div className="text-sm text-gray-200">{formatUnixTimestamp(contract.duration.startDate)} - {formatUnixTimestamp(contract.duration.endDate)}</div>
+              </div>
+              <div className="flex items-center mb-2">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Title:</div>
+                  <div className="text-sm font-semibold text-gray-200">{contract.project.title}</div>
+              </div>
+              <div className="flex items-center mb-2">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Human:</div>
+                  <div className="text-sm font-semibold text-gray-200">{contract.human.firstName} {contract.human.lastName}</div>
+              </div>
+              <div className="items-center mb-2">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Work Packages:</div>
+                  {contract.wps.map((wp, index) => (
+                    <div key={wp._id} className="text-sm font-semibold text-gray-200">
+                      {wp.title}
+                      {index < contract.wps.length - 1 ? ", " : ""}
+                    </div>
+                  ))}
+              </div>
+              <div className="flex items-center">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Hourly Rate:</div>
+                  <div className="text-sm font-semibold text-gray-200">€{contract.hourlyRate}</div>
+              </div>
+              <div className="flex items-center">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Total Cost:</div>
+                  <div className="text-sm font-semibold text-gray-200">€{contract.totalCost}</div>
+              </div>
+          </div>
+
+          <DeleteButton id={contract._id!} endpoint="contracts" />
+        </div>
   );
 };
 

@@ -4,8 +4,19 @@ import { DeleteButton } from "./DeleteButton";
 const HumanCard: React.FC<{ human: Human }> = ({ human }) => {
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
-      <h1 className="text-xl font-bold mb-2">{human.firstName} {human.lastName}</h1>
-      <p className="text-gray-200 mb-2"><strong>VAT:</strong> {human.vat}</p>
+      <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+              <div className="text-lg font-bold text-gray-400 ">Human Entry</div>
+          </div>
+          <div className="flex items-center mb-2">
+              <div className="text-sm font-medium text-gray-400 mr-2">Name:</div>
+              <div className="text-sm font-semibold text-gray-200">{human.firstName + ' ' + human.lastName}</div>
+          </div>
+          <div className="flex items-center">
+            <div className="text-sm font-medium text-gray-400 mr-2">VAT:</div>
+            <div className="text-sm font-semibold text-gray-200">{human.vat}</div>
+          </div>
+      </div>
       <DeleteButton id={human._id!} endpoint="humans" />
     </div>
   );

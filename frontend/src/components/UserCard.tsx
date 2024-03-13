@@ -14,11 +14,32 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
-      <h1 className="text-xl font-bold mb-2">{user.email}</h1>
-      <p className="text-gray-300 mb-2">Role: {user.role}</p>
-      <p className="text-gray-300 mb-2">Projects: {projectCount}</p>
-      <p className="text-gray-300 mb-2">Humans: {humanCount}</p>
-      <p className="text-gray-300 mb-2">Work Packages: {wpCount}</p>
+      <div className="px-6 py-4">
+            <div className="flex items-center justify-between mb-4">
+                <div className="text-lg font-bold text-gray-400 ">User Entry</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">User email:</div>
+                <div className="text-sm font-semibold text-gray-200">{user.email}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Role:</div>
+                <div className="text-sm font-semibold text-gray-200">{user.role}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Total Projects:</div>
+                <div className="text-sm font-semibold text-gray-200">{projectCount}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Total Humans:</div>
+                <div className="text-sm font-semibold text-gray-200">{humanCount}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Total Work Packages:</div>
+                <div className="text-sm font-semibold text-gray-200">{wpCount}</div>
+            </div>
+        </div>
+
       <DeleteButton id={user._id!} endpoint="users"/>
     </div>
   );

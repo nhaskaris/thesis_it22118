@@ -9,34 +9,42 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
 
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
-      <h1 className="text-xl font-bold mb-2">{project.title}</h1>
-      <p className="text-gray-300 mb-4">{project.description}</p>
-      {project.wps && (
-        <div>
-          <h2 className="text-lg font-semibold">Work Packages:</h2>
-          {project.wps.map((wp) => (
-            <div key={wp._id}>
-              <p className="font-semibold">{wp.title}</p>
-              <ul className="list-disc pl-5">
-                {wp.activeIntervals.map((interval, index) => (
-                  <li key={index}>
-                    Interval {index + 1}: {formatUnixTimestamp(interval.startDate)} - {formatUnixTimestamp(interval.endDate)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-lg font-semibold">Interval:</h2>
-          <p>
-            {formatUnixTimestamp(project.interval.startDate)} -{' '}
-            {formatUnixTimestamp(project.interval.endDate)}
-          </p>
-        </div>
+      
+
+      <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+              <div className="text-lg font-bold text-gray-400 ">Project Entry</div>
+              <div className="text-sm text-gray-200">{formatUnixTimestamp(project.interval.startDate)} -{' '} {formatUnixTimestamp(project.interval.endDate)}</div>
+          </div>
+          <div className="flex items-center mb-2">
+              <div className="text-sm font-medium text-gray-400 mr-2">Title:</div>
+              <div className="text-sm font-semibold text-gray-200">{project.title}</div>
+          </div>
+          <div className="flex items-center mb-2">
+              <div className="text-sm font-medium text-gray-400 mr-2">Description:</div>
+              <div className="text-sm font-semibold text-gray-200">{project.description}</div>
+          </div>
+          <div className="items-center mb-2">
+              <div className="text-sm font-medium text-gray-400 mr-2">Work Packages:</div>
+              {project.wps && (
+                <div>
+                  {project.wps.map((wp) => (
+                      <div key={wp._id}>
+                        <p className="font-semibold text-sm">{wp.title}</p>
+                        <ul className="list-disc pl-5 text-sm">
+                          {wp.activeIntervals.map((interval, index) => (
+                            <li key={index}>
+                              Interval {index + 1}: {formatUnixTimestamp(interval.startDate)} - {formatUnixTimestamp(interval.endDate)}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                </div>
+              )}
+          </div>
       </div>
+
       <DeleteButton id={project._id!} endpoint="projects"/>
     </div>
   );
