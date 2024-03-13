@@ -15,7 +15,7 @@
 - **Node.js**: `v20.9.0`
 - **npm**: `10.2.5`
 - **NestJS**: `10.2.0`
-- **NextJS**: `v14.1.0`
+- **NextJS**: `v14.1.3`
 - **MongoDB**: `7.0.6`
 ## Installation
 

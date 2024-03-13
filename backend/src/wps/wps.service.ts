@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateWpDto } from './dto/create-wp.dto';
 import { UpdateWpDto } from './dto/update-wp.dto';
 import { Model } from 'mongoose';

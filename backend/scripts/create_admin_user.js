@@ -51,7 +51,6 @@ async function run() {
    const UserSchema = new mongoose.Schema({
       projects: [],
       humans: [],
-      wps: [],
       contracts: [],
       timesheets: [],
       email: String,
@@ -63,7 +62,6 @@ async function run() {
    User.create({
       projects: [],
       humans: [],
-      wps: [],
       contracts: [],
       timesheets: [],
       email: adminEmail,

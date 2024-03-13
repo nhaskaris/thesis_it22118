@@ -16,11 +16,11 @@ const TimesheetCard: React.FC<{ timesheet: Timesheet}> = ({ timesheet }) => {
                 </div>
                 <div className="flex items-center mb-2">
                 <div className="text-sm font-medium text-gray-400 mr-2">Project:</div>
-                <div className="text-sm font-semibold text-gray-200">{timesheet.project.title}</div>
+                <div className="text-sm font-semibold text-gray-200">{timesheet.project ? timesheet.project.title: 'Deleted'}</div>
                 </div>
                 <div className="flex items-center mb-2">
                 <div className="text-sm font-medium text-gray-400 mr-2">Work Package:</div>
-                <div className="text-sm font-semibold text-gray-200">{timesheet.wp.title}</div>
+                <div className="text-sm font-semibold text-gray-200">{timesheet.wp ? timesheet.wp.title: 'Deleted'}</div>
                 </div>
                 <div className="flex items-center mb-2">
                 <div className="text-sm font-medium text-gray-400 mr-2">Employee:</div>

@@ -91,7 +91,6 @@ export class UsersService {
             },
          })
          .populate('humans', null, Human.name)
-         .populate('wps', null, Wp.name)
          .populate({
             path: 'contracts',
             populate: [
@@ -129,7 +128,6 @@ export class UsersService {
          .exec();
    }
 
-   // TODO
    update(uid: string, updateUserDto: UpdateUserDto) {
       const updateUser = new this.userModel(updateUserDto);
       return this.userModel.updateOne({ uid }, updateUser);
@@ -213,6 +211,7 @@ export class UsersService {
       info.contracts = await this.contractsService.findAll();
       info.humans = await this.humansService.findAll();
       info.timesheets = await this.timesheetsService.findAll();
+      info.wps = await this.wpsService.findAll();
 
       return info;
    }

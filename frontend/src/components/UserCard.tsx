@@ -4,13 +4,13 @@ import { DeleteButton } from "./DeleteButton";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
   // Function to count the number of projects
-  const projectCount = user.projects.length;
+  const projectCount = user.projects ? user.projects.length : 0;
 
   // Function to count the number of humans
-  const humanCount = user.humans.length;
+  const humanCount = user.humans ? user.humans.length : 0;
 
   // Function to count the number of work packages (wps)
-  const wpCount = user.wps.length;
+  const wpCount = user.wps ? user.wps.length : 0;
 
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
