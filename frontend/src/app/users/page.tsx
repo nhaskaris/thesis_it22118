@@ -17,7 +17,7 @@ async function getData() {
         }
     }
 
-    const res = await fetch('http://localhost:8080/users', {
+    const res = await fetch(`${process.env.BACKEND_URL}/users`, {
         headers: {
             authorization: 'Bearer ' + userCookies.value!
         },

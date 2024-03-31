@@ -8,7 +8,7 @@ export async function DELETE(request: Request) {
 
     const json = await request.json();
 
-    const res = await fetch(`http://localhost:8080/${json.endpoint}/${json.id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/${json.endpoint}/${json.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     const info: InsertInfo = await request.json();
 
-    const res = await fetch('http://localhost:8080/users/insertInfo', {
+    const res = await fetch(`${process.env.BACKEND_URL}/users/insertInfo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export async function GET() {
     const cookieStore = cookies()
     const token = cookieStore.get('token')
 
-    const res = await fetch('http://localhost:8080/users/getProfile', {
+    const res = await fetch(`${process.env.BACKEND_URL}/users/getProfile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
