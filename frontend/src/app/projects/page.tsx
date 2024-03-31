@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -56,7 +56,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {projects.map((project) => (
+                {projects && projects.map((project) => (
                     <ProjectCard key={project._id} project={project} />
                 ))}
             </div>

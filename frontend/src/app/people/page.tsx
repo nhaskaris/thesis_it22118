@@ -5,7 +5,7 @@ import Link from "next/link";
 import HumanCard from "@/components/HumanCard";
 
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -42,7 +42,9 @@ export async function getData() {
 }
 
 export default async function Home() {
-    const humans: Human[] = await getData();
+    let humans: Human[] = []
+
+    humans = await getData();
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -56,7 +58,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {humans.map((human) => (
+                {humans && humans.map((human) => (
                     <HumanCard key={human._id} human={human} />
                 ))}
             </div>

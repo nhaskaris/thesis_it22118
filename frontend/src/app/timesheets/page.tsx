@@ -5,7 +5,7 @@ import Link from "next/link";
 import TimesheetCard from '@/components/TimesheetCard';
 
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -62,7 +62,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {data.timesheets.map((timesheet) => (
+                {data && data.timesheets.map((timesheet) => (
                     <TimesheetCard key={timesheet._id} timesheet={timesheet} />
                 ))}
             </div>

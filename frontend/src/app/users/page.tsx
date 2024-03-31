@@ -5,7 +5,7 @@ import Link from "next/link";
 import UserCard from "@/components/UserCard"
 
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -54,7 +54,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {users.map((user) => (
+                {users && users.map((user) => (
                     <UserCard key={user._id} user={user} />
                 ))}
             </div>

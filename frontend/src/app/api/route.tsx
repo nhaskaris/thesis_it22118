@@ -19,15 +19,15 @@ export async function DELETE(request: Request) {
     });
 
     if(!res) {
-        return new Response(res, {
+        return Response.json(res, {
             status: 500,
         });
     }
 
     if (!res.ok) {
-        return new Response(res.statusText), {
+        return Response.json(res.statusText, {
             status: 500,
-        };
+        });
     }
 
     return new Response(res);

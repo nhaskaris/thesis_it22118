@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Contract, Human, Project, Wp } from '@/types/pages';
 
@@ -52,13 +52,45 @@ const NewContractPage: React.FC = () => {
     window.location.href = '/contracts';
   };
 
-  const searchParams = useSearchParams()
+  const globalProjects: Project[] = [];
+  const globalHumans: Human[] = [];
 
-  const humans: Human[] = JSON.parse(searchParams.get('humans')!);
-  const projects: Project[] = JSON.parse(searchParams.get('projects')!);
+  function GetSearchParamsHumans() {
+    const searchParams = useSearchParams()
+
+    const humans: Human[] = JSON.parse(searchParams.get('humans') as string);
+
+    globalHumans.push(...humans);
+
+    return (
+      <select id="selectedPerson" value={selectedPerson ? selectedPerson._id : ''} onChange={handleHumanChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
+        <option value="">Select Person</option>
+        {humans && humans.map((human: Human) => (
+          <option key={human._id} value={human._id}>{human.lastName + ' ' + human.firstName}</option>
+        ))}
+      </select>
+    )
+  }
+
+  function GetSearchParamsProjects() {
+    const searchParams = useSearchParams()
+
+    const projects: Project[] = JSON.parse(searchParams.get('projects') as string);
+
+    globalProjects.push(...projects);
+
+    return (
+      <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
+            <option value="">Select Project</option>
+            {projects.map((project: Project) => (
+              <option key={project._id} value={project._id}>{project.title}</option>
+            ))}
+          </select>
+    )
+  }
 
   const handleProjectChange = (e: any) => {
-    for(const project of projects) {
+    for(const project of globalProjects) {
       if (project._id == e.target.value) {
         setSelectedProject(project);
         break;
@@ -67,7 +99,7 @@ const NewContractPage: React.FC = () => {
   }
 
   const handleHumanChange = (e: any) => {
-    for(const human of humans) {
+    for(const human of globalHumans) {
       if (human._id == e.target.value) {
         setSelectedPerson(human);
         break;
@@ -85,6 +117,10 @@ const NewContractPage: React.FC = () => {
       }
     });
   };
+
+  function Loading() {
+    return <h2>🌀 Loading...</h2>;
+  }
 
   return (
     <div className="container mx-auto py-8 border border-gray-300 rounded-md shadow-md p-8 mt-2 bg-gray-800">
@@ -131,22 +167,16 @@ const NewContractPage: React.FC = () => {
 
         <div className="mb-4">
           <label htmlFor="selectedPerson" className="block text-sm font-medium text-white">Select Person:</label>
-          <select id="selectedPerson" value={selectedPerson ? selectedPerson._id : ''} onChange={handleHumanChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
-            <option value="">Select Person</option>
-            {humans.map((human: Human) => (
-              <option key={human._id} value={human._id}>{human.lastName + ' ' + human.firstName}</option>
-            ))}
-          </select>
+          <Suspense fallback={<Loading />}>
+            <GetSearchParamsHumans />
+          </Suspense>
         </div>
 
         <div className="mb-4">
           <label htmlFor="selectedProject" className="block text-sm font-medium text-white">Select Project:</label>
-          <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
-            <option value="">Select Project</option>
-            {projects.map((project: Project) => (
-              <option key={project._id} value={project._id}>{project.title}</option>
-            ))}
-          </select>
+          <Suspense fallback={<Loading />}>
+            <GetSearchParamsProjects />
+          </Suspense>
         </div>
 
         {selectedProject && (

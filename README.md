@@ -66,14 +66,14 @@ To install the dependecies
   npm install
 ```
 
-To build th project
+To build the project
 ```bash
   npm run build
 ```
 
 To start the project
 ```bash
-  npm run start
+  npm run start -- -p PORT_NUMBER
 ```
 ## Authors
 

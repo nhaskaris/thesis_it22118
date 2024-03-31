@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Timesheet, Human, Project, Wp } from '@/types/pages';
 
@@ -46,26 +46,62 @@ const NewTimesheetPage: React.FC = () => {
         window.location.href = '/timesheets';
     };
 
-    const searchParams = useSearchParams()
+    function Loading() {
+        return <h2>🌀 Loading...</h2>;
+      }
 
-    const humans: Human[] = JSON.parse(searchParams.get('humans')!);
-    const projects: Project[] = JSON.parse(searchParams.get('projects')!);
+    const globalProjects: Project[] = [];
+    const globalHumans: Human[] = [];
+
+    function GetSearchParamsHumans() {
+        const searchParams = useSearchParams()
+    
+        const humans: Human[] = JSON.parse(searchParams.get('humans') as string);
+    
+        globalHumans.push(...humans);
+    
+        return (
+          <select id="selectedPerson" value={selectedPerson ? selectedPerson._id : ''} onChange={handleHumanChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
+            <option value="">Select Person</option>
+            {humans && humans.map((human: Human) => (
+              <option key={human._id} value={human._id}>{human.lastName + ' ' + human.firstName}</option>
+            ))}
+          </select>
+        )
+      }
+    
+      function GetSearchParamsProjects() {
+        const searchParams = useSearchParams()
+    
+        const projects: Project[] = JSON.parse(searchParams.get('projects') as string);
+    
+        globalProjects.push(...projects);
+    
+        return (
+          <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
+                <option value="">Select Project</option>
+                {projects.map((project: Project) => (
+                  <option key={project._id} value={project._id}>{project.title}</option>
+                ))}
+              </select>
+        )
+      }
 
     const handleProjectChange = (e: any) => {
-            const project = projects.find(project => project._id === e.target.value);
-            setSelectedProject(project!);
+        const project = globalProjects.find(project => project._id === e.target.value);
+        setSelectedProject(project!);
     }
 
     const handleHumanChange = (e: any) => {
-        const human = humans.find(human => human._id === e.target.value);
+        const human = globalHumans.find(human => human._id === e.target.value);
         setSelectedPerson(human!);
     }
 
     const handleWorkPackageChange = (e: any, wpId: string) => {
         if (e.target.checked) {
-        setSelectedWorkPackages([...selectedWorkPackages, wpId]);
+            setSelectedWorkPackages([...selectedWorkPackages, wpId]);
         } else {
-        setSelectedWorkPackages(selectedWorkPackages.filter(id => id !== wpId));
+            setSelectedWorkPackages(selectedWorkPackages.filter(id => id !== wpId));
         }
     }
 
@@ -83,17 +119,15 @@ const NewTimesheetPage: React.FC = () => {
                 </div>
                 <div className="flex flex-col mb-4">
                     <label htmlFor="selectedPerson" className="mb-2">Select a person</label>
-                    <select id="selectedPerson" required value={selectedPerson?._id} onChange={handleHumanChange} className="border border-gray-300 rounded-md p-2 text-black">
-                        <option value="">Select Person</option>
-                        {humans.map(human => <option key={human._id} value={human._id}>{human.lastName}, {human.firstName}</option>)}
-                    </select>
+                    <Suspense fallback={<Loading />}>
+                        <GetSearchParamsHumans />
+                    </Suspense>
                 </div>
                 <div className="flex flex-col mb-4">
                     <label htmlFor="selectedProject" className="mb-2">Select a project</label>
-                    <select id="selectedProject" required value={selectedProject?._id} onChange={handleProjectChange} className="border border-gray-300 rounded-md p-2 text-black">
-                        <option value="">Select Project</option>
-                        {projects.map(project => <option key={project._id} value={project._id}>{project.title}</option>)}
-                    </select>
+                    <Suspense fallback={<Loading />}>
+                        <GetSearchParamsProjects />
+                    </Suspense>
                 </div>
                 <div className="flex flex-col mb-4">
                     <label className="mb-2">Select work packages</label>

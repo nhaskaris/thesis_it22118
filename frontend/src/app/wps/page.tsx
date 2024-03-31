@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 import WPCard from '@/components/WpCard';
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -53,7 +53,7 @@ export default async function Home() {
                 </Link> */}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {wps.map((wp) => (
+                {wps && wps.map((wp) => (
                     <WPCard key={wp._id} wp={wp} />
                 ))}
             </div>

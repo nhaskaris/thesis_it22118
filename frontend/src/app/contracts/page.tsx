@@ -5,7 +5,7 @@ import Link from "next/link";
 import ContractCard from '@/components/ContractCard';
 
 
-export async function getData() {
+async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
@@ -62,7 +62,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {data.contracts.map((contract) => (
+                {data && data.contracts.map((contract) => (
                     <ContractCard key={contract._id} contract={contract} />
                 ))}
             </div>
