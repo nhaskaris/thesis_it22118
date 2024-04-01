@@ -3,14 +3,15 @@ import { User } from '@/types/pages';
 import { DeleteButton } from "./DeleteButton";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
-  // Function to count the number of projects
   const projectCount = user.projects ? user.projects.length : 0;
 
-  // Function to count the number of humans
   const humanCount = user.humans ? user.humans.length : 0;
 
-  // Function to count the number of work packages (wps)
   const wpCount = user.wps ? user.wps.length : 0;
+
+  const contractCount = user.contracts ? user.contracts.length : 0;
+
+  const timesheetCount = user.timesheets ? user.timesheets.length : 0;
 
   return (
     <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
@@ -37,6 +38,14 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             <div className="flex items-center mb-2">
                 <div className="text-sm font-medium text-gray-400 mr-2">Total Work Packages:</div>
                 <div className="text-sm font-semibold text-gray-200">{wpCount}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Total Contracts:</div>
+                <div className="text-sm font-semibold text-gray-200">{contractCount}</div>
+            </div>
+            <div className="flex items-center mb-2">
+                <div className="text-sm font-medium text-gray-400 mr-2">Total Timesheets:</div>
+                <div className="text-sm font-semibold text-gray-200">{timesheetCount}</div>
             </div>
         </div>
 
