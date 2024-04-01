@@ -55,7 +55,7 @@ export default async function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {projects && projects.length && projects.map((project) => (
+                {projects && projects.length > 0 && projects.map((project) => (
                     <ProjectCard key={project._id} project={project} />
                 ))}
             </div>
