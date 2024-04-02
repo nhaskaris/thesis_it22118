@@ -13,7 +13,7 @@ function Header() {
 
   return (
     <nav
-    className="flex-no-wrap relative flex w-full items-center justify-between py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
+    className="flex-no-wrap relative flex w-full items-center justify-between py-2 shadow-md dark:bg-neutral-600 lg:flex-wrap lg:justify-start lg:py-4">
         <div className="flex w-full flex-wrap items-center justify-between px-3">
             {user ? (
                 <div
