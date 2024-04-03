@@ -3,6 +3,7 @@ import { Contract, User} from '@/types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import ContractCard from '@/components/ContractCard';
+import SearchBar from '@/components/SearchBar';
 
 
 async function getData() {
@@ -41,8 +42,18 @@ async function getData() {
     return data;
 }
 
-export default async function Home() {
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const data: User = await getData();
+
+    let filteredContracts = data.contracts;
+
+    if (searchParams.q) {
+        filteredContracts = filteredContracts.filter((contract) => {
+            return contract['_id']!.toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+    } else {
+        filteredContracts = data.contracts;
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -61,8 +72,9 @@ export default async function Home() {
                 Create Contract
                 </Link>
             </div>
+            <SearchBar items={filteredContracts} endpoint='contracts'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {data && data.contracts.map((contract) => (
+                {filteredContracts && filteredContracts.map((contract) => (
                     <ContractCard key={contract._id} contract={contract} />
                 ))}
             </div>

@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 import { Wp } from '@/types/pages';
 import { redirect } from 'next/navigation';
-import Link from "next/link";
 import WPCard from '@/components/WpCard';
+import SearchBar from '@/components/SearchBar';
 
 async function getData() {
     const userCookies = cookies().get('token')
@@ -38,8 +38,20 @@ async function getData() {
     return await res.json();
 }
 
-export default async function Home() {
+
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const wps: Wp[] = (await getData()).wps;
+
+    let filteredWps = wps
+
+
+    if (searchParams.q) {
+        filteredWps = filteredWps.filter((wp) => {
+            return wp['title'].toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+    } else {
+        filteredWps = wps;
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -52,8 +64,9 @@ export default async function Home() {
                 Insert Wp
                 </Link> */}
             </div>
+            <SearchBar items={filteredWps} endpoint='wps'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {wps && wps.map((wp) => (
+                {filteredWps && filteredWps.map((wp) => (
                     <WPCard key={wp._id} wp={wp} />
                 ))}
             </div>

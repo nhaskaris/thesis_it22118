@@ -39,6 +39,10 @@ const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
                   <div className="text-sm font-medium text-gray-400 mr-2">Total Cost:</div>
                   <div className="text-sm font-semibold text-gray-200">€{contract.totalCost}</div>
               </div>
+              <div className="flex items-center">
+                  <div className="text-sm font-medium text-gray-400 mr-2">Id:</div>
+                  <div className="text-sm font-semibold text-gray-200">{contract._id}</div>
+              </div>
           </div>
 
           <DeleteButton id={contract._id!} endpoint="contracts" />

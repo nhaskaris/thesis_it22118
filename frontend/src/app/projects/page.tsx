@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { Project } from '../../types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
+import SearchBar from "@/components/SearchBar";
 
 
 async function getData() {
@@ -41,8 +42,19 @@ async function getData() {
     return data.projects;
 }
 
-export default async function Home() {
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const projects: Project[] = await getData();
+    
+    let filteredProjects = projects;
+
+
+    if (searchParams.q) {
+        filteredProjects = filteredProjects.filter((project) => {
+            return project['title'].toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+    } else {
+        filteredProjects = projects;
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -55,8 +67,9 @@ export default async function Home() {
                 Create Project
                 </Link>
             </div>
+            <SearchBar items={filteredProjects} endpoint='projects'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {projects && projects.length > 0 && projects.map((project) => (
+                {filteredProjects && filteredProjects.length > 0 && filteredProjects.map((project) => (
                     <ProjectCard key={project._id} project={project} />
                 ))}
             </div>

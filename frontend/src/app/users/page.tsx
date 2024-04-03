@@ -3,7 +3,7 @@ import { User } from '@/types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import UserCard from "@/components/UserCard"
-
+import SearchBar from '@/components/SearchBar';
 
 async function getData() {
     const userCookies = cookies().get('token')
@@ -39,8 +39,20 @@ async function getData() {
     return await res.json();
 }
 
-export default async function Home() {
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const users: User[] = await getData();
+
+    let filteredUsers = users
+
+
+    if (searchParams.q) {
+        filteredUsers = filteredUsers.filter((user) => {
+            return user['email'].toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+        console.log(filteredUsers)
+    } else {
+        filteredUsers = users;
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -53,8 +65,9 @@ export default async function Home() {
                 Insert User
                 </Link>
             </div>
+            <SearchBar items={filteredUsers} endpoint='users'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {users && users.map((user) => (
+                {filteredUsers && filteredUsers.map((user) => (
                     <UserCard key={user._id} user={user} />
                 ))}
             </div>

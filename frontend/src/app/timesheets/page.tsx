@@ -3,6 +3,7 @@ import { User } from '../../types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import TimesheetCard from '@/components/TimesheetCard';
+import SearchBar from '@/components/SearchBar';
 
 
 async function getData() {
@@ -41,8 +42,19 @@ async function getData() {
     return data
 }
 
-export default async function Home() {
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const data: User = await getData();
+
+    let filteredTimesheets = data.timesheets
+
+
+    if (searchParams.q) {
+        filteredTimesheets = filteredTimesheets.filter((timesheet) => {
+            return timesheet['_id']!.toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+    } else {
+        filteredTimesheets = data.timesheets
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -61,8 +73,9 @@ export default async function Home() {
                     Create Timesheet
                 </Link>
             </div>
+            <SearchBar items={filteredTimesheets} endpoint='timesheets'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {data && data.timesheets.map((timesheet) => (
+                {filteredTimesheets && filteredTimesheets.map((timesheet) => (
                     <TimesheetCard key={timesheet._id} timesheet={timesheet} />
                 ))}
             </div>

@@ -3,6 +3,7 @@ import { Human } from '../../types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import HumanCard from "@/components/HumanCard";
+import SearchBar from '@/components/SearchBar';
 
 
 async function getData() {
@@ -41,10 +42,21 @@ async function getData() {
     return data.humans;
 }
 
-export default async function Home() {
+export default async function Home({searchParams}: {searchParams: {q: string}}) {
     let humans: Human[] = []
 
     humans = await getData();
+
+    let filteredHumans = humans
+
+
+    if (searchParams.q) {
+        filteredHumans = filteredHumans.filter((human) => {
+            return human['vat'].toLowerCase().includes(searchParams.q.toLowerCase());
+        });
+    } else {
+        filteredHumans = humans;
+    }
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
@@ -57,8 +69,9 @@ export default async function Home() {
                 Insert Human
                 </Link>
             </div>
+            <SearchBar items={filteredHumans} endpoint='people'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {humans && humans.map((human) => (
+                {filteredHumans && filteredHumans.map((human) => (
                     <HumanCard key={human._id} human={human} />
                 ))}
             </div>
