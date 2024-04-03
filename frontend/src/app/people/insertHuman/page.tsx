@@ -32,8 +32,8 @@ const NewHumanPage: React.FC = () => {
       vat
     };
 
-    // check if the vat is 9 characters long
-    if (newHuman.vat.length !== 9) {
+    // check if the vat is 9 characters long and only contains numbers
+    if (newHuman.vat.length !== 9 || !newHuman.vat.match(/^\d+$/)) {
       setAlert({ message: 'VAT should be 9 characters long', severity: 'error', visible: true, onClose: () => setAlert(null)});
       return;
     }

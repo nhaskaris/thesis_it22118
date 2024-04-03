@@ -30,11 +30,11 @@ function Header() {
                     ))}
                     {isAdmin && (
                         <div className="relative flex items-center" data-te-dropdown-alignment="end">
-                            <Link href={`/users`}>
-                                <button type='button' className='mr-5 text-white'>Users</button>
-                            </Link>
                             <Link href={`/wps`}>
                                 <button type='button' className='mr-5 text-white'>Wps</button>
+                            </Link>
+                            <Link href={`/users`}>
+                                <button type='button' className='mr-5 text-white'>Users</button>
                             </Link>
                         </div>
                     )}
