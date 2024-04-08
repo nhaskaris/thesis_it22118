@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { Project, Wp, Interval, AlertInfo } from '@/types/pages';
 import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert';
+import dayjs from 'dayjs';
 
 const NewProjectPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [workPackages, setWorkPackages] = useState<Wp[]>([{ title: '', activeIntervals: [] }]);
   const [intervalStart, setIntervalStart] = useState('');
-  const [intervalEnd, setIntervalEnd] = useState('');
+  const [duration, setDuration] = useState('');
   const router = useRouter()
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,10 +65,17 @@ const NewProjectPage: React.FC = () => {
 
   const handleIntervalChange = (wpIndex: number, intervalIndex: number, field: keyof Interval, value: string) => {
     const updatedWorkPackages = [...workPackages];
-    updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
-      ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
-      [field]: value
-    };
+    if (field === 'startDate') {
+      updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
+        ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
+        [field]: value
+      };
+    } else {
+      updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
+        ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
+        [field]: value
+      };
+    }
     setWorkPackages(updatedWorkPackages);
   };
 
@@ -77,17 +85,18 @@ const NewProjectPage: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    //end date of project = start date + duaration
     const newProject: Project = {
       title,
       description,
       wps: workPackages,
-      interval: { startDate: intervalStart, endDate: intervalEnd },
+      interval: { startDate: intervalStart, endDate: '' },
     };
 
     for (const wp of newProject.wps) {
       for (const interval of wp.activeIntervals) {
         const startDate = parseDateToTimestamp(interval.startDate);
-        const endDate = parseDateToTimestamp(interval.endDate);
+        const endDate = dayjs(startDate).add(Number(interval.endDate), 'month').toDate().getTime();
 
         if (startDate && endDate) {
           interval.startDate = String(startDate);
@@ -99,16 +108,16 @@ const NewProjectPage: React.FC = () => {
     }
 
     const startDate = parseDateToTimestamp(newProject.interval.startDate);
-    const endDate = parseDateToTimestamp(newProject.interval.endDate);
+    const endDate = dayjs(startDate).add(Number(duration), 'month').toDate().getTime();
 
     if (!startDate || !endDate) {
       return showAlert('Invalid date format. Use dd/mm/yyyy', 'error');
     }
 
     //convert to Unix time
-    newProject.interval.startDate = String(endDate);
+    newProject.interval.startDate = String(startDate);
     newProject.interval.endDate = String(endDate);
-    
+
     const res = await fetch('/api', { 
         method: 'POST', 
         body: JSON.stringify({"project": newProject}), 
@@ -176,10 +185,11 @@ const NewProjectPage: React.FC = () => {
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'startDate', e.target.value)}
                 className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                 required
+                min={ new Date().toJSON().split('T')[0]}
               />
-              <label className="block text-sm font-medium text-white-700 mb-1">End Date 1</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Duration 1</label>
               <input
-                type="date"
+                type="number"
                 value={wp.activeIntervals[0] ? wp.activeIntervals[0].endDate : ''}
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'endDate', e.target.value)}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -195,10 +205,11 @@ const NewProjectPage: React.FC = () => {
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'startDate', e.target.value)}
                   className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                   required
+                  min={ new Date().toJSON().split('T')[0]}
                 />
-                <label className="block text-sm font-medium text-white-700 mb-1">End Date {intervalIndex + 2}</label>
+                <label className="block text-sm font-medium text-white-700 mb-1">Duration {intervalIndex + 2}</label>
                 <input
-                  type="date"
+                  type="number"
                   value={interval.endDate}
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'endDate', e.target.value)}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
@@ -252,18 +263,19 @@ const NewProjectPage: React.FC = () => {
               value={intervalStart}
               onChange={(e) => setIntervalStart(e.target.value)}
               required
+              min={ new Date().toJSON().split('T')[0]}
             />
           </div>
           <div>
             <label htmlFor="intervalEnd" className="block text-sm font-medium text-white-700">
-            End Date of Project
+            Duration of Project (months)
             </label>
             <input
-              type="date"
+              type="number"
               id="intervalEnd"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
-              value={intervalEnd}
-              onChange={(e) => setIntervalEnd(e.target.value)}
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
               required
             />
           </div>
