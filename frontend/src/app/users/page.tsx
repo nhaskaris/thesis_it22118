@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { User } from '@/types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
-import UserCard from "@/components/UserCard"
+import UserCard from "@/components/Cards/UserCard"
 import SearchBar from '@/components/SearchBar';
 
 async function getData() {
@@ -44,12 +44,10 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
 
     let filteredUsers = users
 
-
     if (searchParams.q) {
         filteredUsers = filteredUsers.filter((user) => {
             return user['email'].toLowerCase().includes(searchParams.q.toLowerCase());
         });
-        console.log(filteredUsers)
     } else {
         filteredUsers = users;
     }

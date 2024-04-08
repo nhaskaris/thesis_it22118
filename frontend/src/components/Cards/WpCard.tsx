@@ -1,6 +1,6 @@
 import React from 'react';
 import { Wp } from '@/types/pages';
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton } from "../DeleteButton";
 
 const WPCard: React.FC<{ wp: Wp }> = ({ wp }) => {
   const formatUnixTimestamp = (timestamp: string): string => {

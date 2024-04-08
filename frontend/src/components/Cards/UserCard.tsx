@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from '@/types/pages';
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton } from "../DeleteButton";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
   const projectCount = user.projects ? user.projects.length : 0;

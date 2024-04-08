@@ -1,6 +1,6 @@
 import { Timesheet } from '@/types/pages';
 import React from 'react';
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton } from "../DeleteButton";
 
 const TimesheetCard: React.FC<{ timesheet: Timesheet}> = ({ timesheet }) => {
     const formatUnixTimestamp = (timestamp: string): string => {

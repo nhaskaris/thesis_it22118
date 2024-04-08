@@ -1,10 +1,9 @@
 import { cookies } from 'next/headers'
-import { Human } from '../../types/pages';
+import { User } from '@/types/pages';
 import { redirect } from 'next/navigation';
-import Link from "next/link";
-import HumanCard from "@/components/Cards/HumanCard";
+import LinkedUserCard from "@/components/Cards/LinkedUserCard"
 import SearchBar from '@/components/SearchBar';
-
+import Link from 'next/link';
 
 async function getData() {
     const userCookies = cookies().get('token')
@@ -18,7 +17,7 @@ async function getData() {
         }
     }
 
-    const res = await fetch(`${process.env.BACKEND_URL}/users/getProfile`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/users/linkedUsers`, {
         headers: {
             authorization: 'Bearer ' + userCookies.value!
         },
@@ -36,26 +35,23 @@ async function getData() {
     if (!res.ok) {
         redirect('/')
     }
-    
+
     const data = await res.json();
 
-    return data.humans;
+    return data;
 }
 
 export default async function Home({searchParams}: {searchParams: {q: string}}) {
-    let humans: Human[] = []
+    const linkedUsers: string[]= await getData();
 
-    humans = await getData();
-
-    let filteredHumans = humans
-
+    let filteredLinkedUsers = linkedUsers
 
     if (searchParams.q) {
-        filteredHumans = filteredHumans.filter((human) => {
-            return human['vat'].toLowerCase().includes(searchParams.q.toLowerCase());
+        filteredLinkedUsers = filteredLinkedUsers.filter((linkedUser) => {
+            return linkedUser.toLowerCase().includes(searchParams.q.toLowerCase());
         });
     } else {
-        filteredHumans = humans;
+        filteredLinkedUsers = linkedUsers;
     }
 
     return (
@@ -63,19 +59,18 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
             <div className="flex justify-between mb-4">
                 <div></div>
                 <Link
-                href="/people/insertHuman"
+                href="/link/createLink"
                 className="mr-8 py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                Insert Human
+                Create Link
                 </Link>
             </div>
-            <SearchBar items={filteredHumans} endpoint='people'/>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-                {filteredHumans && filteredHumans.map((human) => (
-                    <HumanCard key={human._id} human={human} />
+            <SearchBar items={filteredLinkedUsers} endpoint={'link'} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ml-4">
+                {filteredLinkedUsers && filteredLinkedUsers.map((linkedUser) => (
+                    <LinkedUserCard key={linkedUser} email={linkedUser} />
                 ))}
             </div>
         </div>
-    );
+    )
 }
-  

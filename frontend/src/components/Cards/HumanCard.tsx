@@ -1,5 +1,5 @@
 import { Human } from "@/types/pages";
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton } from "../DeleteButton";
 
 const HumanCard: React.FC<{ human: Human }> = ({ human }) => {
   return (

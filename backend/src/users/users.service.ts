@@ -15,6 +15,7 @@ import { WpsService } from 'src/wps/wps.service';
 import * as crypto from 'crypto';
 import { InfoAdmin } from 'src/types/userAuthInfoRequest';
 import { TimesheetsService } from 'src/timesheets/timesheets.service';
+import { LinkUserDto } from './dto/link-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +66,11 @@ export class UsersService {
       this.authService.firebaseApp.auth().setCustomUserClaims(user.uid, {
          admin: createUserDto.role == 'admin',
       });
+
+      const userExists = await this.userModel.findOne({ uid: user.uid }).exec();
+      if (userExists) {
+         return userExists;
+      }
 
       createdUser.uid = user.uid;
 
@@ -214,5 +220,174 @@ export class UsersService {
       info.wps = await this.wpsService.findAll();
 
       return info;
+   }
+
+   async linkUser(uid: string, linkUserDto: LinkUserDto) {
+      const email = linkUserDto.email.toLowerCase();
+      //create user with new email and link it to the user with the uid given. Then make sure the new user is linked with all the other users linked to the user with the uid given. First import to the new user the other users and finally add to the other users the new user.
+      const newUser = await this.create({ email, role: 'user' });
+
+      if (!newUser) {
+         return;
+      }
+
+      const oldUser = await this.userModel.findOne({ uid }).exec();
+
+      if (!oldUser) {
+         return;
+      }
+
+      newUser.linked_users.push(oldUser);
+
+      for (const linkedUser of oldUser.linked_users) {
+         newUser.linked_users.push(linkedUser);
+      }
+
+      for (const linkedUser of oldUser.linked_users) {
+         const user = await this.userModel.findOne({ _id: linkedUser }).exec();
+
+         if (!user) {
+            return;
+         }
+
+         user.linked_users.push(newUser);
+
+         await user.updateOne(user);
+      }
+
+      oldUser.linked_users.push(newUser);
+
+      await oldUser.updateOne(oldUser);
+
+      return newUser.updateOne(newUser);
+   }
+
+   async getAllInfoLinkedUsers(user: User) {
+      for (const linkedUser of user.linked_users) {
+         const linked_user = await this.userModel
+            .findOne({ _id: linkedUser })
+            .populate({
+               path: 'projects',
+               populate: {
+                  path: 'wps',
+                  model: Wp.name,
+               },
+            })
+            .populate('humans', null, Human.name)
+            .populate({
+               path: 'contracts',
+               populate: [
+                  {
+                     path: 'project',
+                     model: 'Project',
+                  },
+                  {
+                     path: 'human',
+                     model: 'Human',
+                  },
+                  {
+                     path: 'wps',
+                     model: 'Wp',
+                  },
+               ],
+            })
+            .populate({
+               path: 'timesheets',
+               populate: [
+                  {
+                     path: 'project',
+                     model: 'Project',
+                  },
+                  {
+                     path: 'human',
+                     model: 'Human',
+                  },
+                  {
+                     path: 'wp',
+                     model: 'Wp',
+                  },
+               ],
+            })
+            .exec();
+
+         if (!linked_user) {
+            return;
+         }
+
+         user.projects.push(...linked_user.projects);
+         user.humans.push(...linked_user.humans);
+         user.contracts.push(...linked_user.contracts);
+         user.timesheets.push(...linked_user.timesheets);
+      }
+
+      return user;
+   }
+
+   async getLinkedUsers(uid: string) {
+      const user = await this.userModel
+         .findOne({ uid })
+         .populate('linked_users')
+         .exec();
+
+      if (!user) {
+         return;
+      }
+
+      const emails = user.linked_users.map((linkedUser) => {
+         return linkedUser.email;
+      });
+
+      return emails;
+   }
+
+   async unlinkUser(uid: string, email: string) {
+      const user = await this.userModel.findOne({ uid }).exec();
+
+      if (!user) {
+         return;
+      }
+
+      const userToUnlink = await this.userModel
+         .findOne({
+            email: email.toLowerCase(),
+         })
+         .populate('linked_users')
+         .exec();
+
+      if (!userToUnlink) {
+         return;
+      }
+
+      user.linked_users = user.linked_users.filter((userToUnlink) => {
+         userToUnlink.email !== email;
+      });
+
+      //for every linked user of the user with the email given, remove the user with the email given
+
+      for (const linkedUser of user.linked_users) {
+         const user = await this.userModel.findOne({ _id: linkedUser }).exec();
+
+         if (!user) {
+            return;
+         }
+
+         user.linked_users = user.linked_users.filter(
+            (linkedUser) => linkedUser.email !== email,
+         );
+
+         userToUnlink.linked_users = userToUnlink.linked_users.filter(
+            (linkedUser) => linkedUser.email !== user.email,
+         );
+
+         await user.updateOne(user);
+      }
+
+      await user.updateOne(user);
+
+      userToUnlink.linked_users = userToUnlink.linked_users.filter(
+         (linkedUser) => linkedUser.email !== user.email,
+      );
+
+      return userToUnlink.updateOne(userToUnlink);
    }
 }

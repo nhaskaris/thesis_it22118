@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { Wp } from '@/types/pages';
 import { redirect } from 'next/navigation';
-import WPCard from '@/components/WpCard';
+import WPCard from '@/components/Cards/WpCard';
 import SearchBar from '@/components/SearchBar';
 
 async function getData() {

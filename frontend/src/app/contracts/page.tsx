@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { Contract, User} from '@/types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
-import ContractCard from '@/components/ContractCard';
+import ContractCard from '@/components/Cards/ContractCard';
 import SearchBar from '@/components/SearchBar';
 
 

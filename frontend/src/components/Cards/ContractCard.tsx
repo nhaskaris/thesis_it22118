@@ -1,5 +1,5 @@
 import React from "react";
-import { DeleteButton } from "./DeleteButton"; // Assuming DeleteButton is already defined
+import { DeleteButton } from "../DeleteButton"; // Assuming DeleteButton is already defined
 import { Contract } from "@/types/pages";
 
 const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {

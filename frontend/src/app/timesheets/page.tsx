@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { User } from '../../types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
-import TimesheetCard from '@/components/TimesheetCard';
+import TimesheetCard from '@/components/Cards/TimesheetCard';
 import SearchBar from '@/components/SearchBar';
 
 

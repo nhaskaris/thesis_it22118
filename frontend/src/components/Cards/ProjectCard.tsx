@@ -1,5 +1,5 @@
 import { Project } from "@/types/pages"
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton } from "../DeleteButton";
 
 //for each work package, we want to display the title of the work package and the interval of the work package
 const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {

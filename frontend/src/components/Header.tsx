@@ -5,7 +5,7 @@ import Link from "next/link";
 import { UserAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 
-const pages = ['Projects', 'Contracts', 'Timesheets', 'People'];
+const pages = ['Projects', 'Contracts', 'Timesheets', 'People', 'Link'];
 
 function Header() {
   const { user, googleSignIn, logOut, photoUrl, loading, isAdmin } = UserAuth();

@@ -23,6 +23,9 @@ export class User {
    })
    timesheets: Timesheet[];
 
+   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+   linked_users: User[];
+
    @Prop()
    email: string;
 

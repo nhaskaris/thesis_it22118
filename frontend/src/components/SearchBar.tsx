@@ -20,7 +20,7 @@ function SearchBar<T>({ items, endpoint}: SearchBarProps<T>) {
     };
 
     return (
-        items.length > 0 && (
+        items && items.length > 0 && (
             <div className="flex justify-center items-center mb-4">
                 <input
                     type="text"

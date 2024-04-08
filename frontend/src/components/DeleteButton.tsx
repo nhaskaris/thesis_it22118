@@ -29,6 +29,5 @@ export const DeleteButton = (props: DeleteButtonProps) => {
           </svg>
           Delete
         </button>
-      );
-      
+      );  
 }
