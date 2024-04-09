@@ -2,16 +2,19 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Contract, Human, Project, Wp } from '@/types/pages';
+import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
+import Alert from '@/components/Alert';
+import dayjs from 'dayjs';
 
 const NewContractPage: React.FC = () => {
   const [intervalStart, setIntervalStart] = useState('');
-  const [intervalEnd, setIntervalEnd] = useState('');
+  const [duration, setDuration] = useState('');
   const [hourlyRate, setHourlyRate] = useState<number>();
   const [totalCost, setTotalCost] = useState<number>();
   const [selectedPerson, setSelectedPerson] = useState<Human>();
   const [selectedProject, setSelectedProject] = useState<Project>();
   const [selectedWorkPackages, setSelectedWorkPackages] = useState<string[]>([]);
+  const [alert, setAlert] = useState<AlertInfo | null>(null);
   
   const router = useRouter();
 
@@ -29,6 +32,11 @@ const NewContractPage: React.FC = () => {
       }
     }
 
+    if (hourlyRate! * 143* Number(duration) > totalCost!) {
+      setAlert({ message: `Hourly Rate ${hourlyRate} * ${duration} months exceeds total cost of contract ${totalCost}$`, severity: 'error', visible: true, onClose: () => setAlert(null)});
+      return;
+    }
+
     const newContract: Contract = {
       hourlyRate: hourlyRate!,
       totalCost: totalCost!,
@@ -37,7 +45,7 @@ const NewContractPage: React.FC = () => {
       wps: wps,
       duration: {
         startDate: String(new Date(intervalStart).getTime()),
-        endDate: String(new Date(intervalEnd).getTime()),
+        endDate: String(dayjs(intervalStart).add(Number(duration), 'month').toDate().getTime())
       }
     }
 
@@ -138,18 +146,19 @@ const NewContractPage: React.FC = () => {
                 value={intervalStart}
                 onChange={(e) => setIntervalStart(e.target.value)}
                 required
+                min={dayjs().format('YYYY-MM-DD')}
               />
             </div>
             <div>
               <label htmlFor="intervalEnd" className="block text-sm font-medium text-white-700">
-              End Date of Contract
+                Duration of Contract(Months)
               </label>
               <input
-                type="date"
+                type="number"
                 id="intervalEnd"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
-                value={intervalEnd}
-                onChange={(e) => setIntervalEnd(e.target.value)}
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
                 required
               />
             </div>
@@ -194,6 +203,10 @@ const NewContractPage: React.FC = () => {
         <div className="mt-6 flex justify-between">
           <button type="button" onClick={() => router.push('/contracts')} className="w-1/2 px-4 py-2 bg-gray-300 text-white rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400">Cancel</button>
           <button type="submit" className="w-1/2 ml-3 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Create Contract</button>
+        </div>
+
+        <div>
+          {alert && <Alert message={alert.message} severity={alert.severity} visible={alert.visible} onClose={alert.onClose}/>}
         </div>
       </form>
     </div>
