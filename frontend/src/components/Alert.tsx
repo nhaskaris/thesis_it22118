@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react';
 import { AlertInfo } from '@/types/pages';
 
@@ -18,8 +20,23 @@ const SeverityText: Colors = {
 }
 
 const Alert: React.FC<AlertInfo> = ({ message, severity, visible, onClose }) => {
-    return visible ? (
-        <div className="absolute bottom-0 left-0 text-center py-4 lg:px-4">
+    const [show, setShow] = React.useState(visible);
+
+    React.useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        if (show) {
+            timer = setTimeout(() => {
+                setShow(false);
+                onClose();
+            }, 5000);
+        }
+
+        return () => clearTimeout(timer);
+    }, [onClose, show]);
+
+    return show ? (
+        <div className={`absolute bottom-0 left-0 text-center py-4 lg:px-4 transition-opacity duration-300 ${show ? 'opacity-100' : 'opacity-0'}`}>
             <div className={`p-2 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex ${SeverityColors[severity]}`} id='container' role="alert">
                 <span className="flex rounded-full uppercase px-2 py-1 text-xl font-bold mr-3">⚠️</span>
                 <span className={`font-semibold mr-2 text-left flex-auto ${SeverityText[severity]}`}>{message}</span>
