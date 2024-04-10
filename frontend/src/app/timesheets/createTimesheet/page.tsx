@@ -68,9 +68,9 @@ const NewTimesheetPage: React.FC = () => {
             ))}
           </select>
         )
-      }
+    }
     
-      function GetSearchParamsProjects() {
+    function GetSearchParamsProjects() {
         const searchParams = useSearchParams()
     
         const projects: Project[] = JSON.parse(searchParams.get('projects') as string);
@@ -85,7 +85,7 @@ const NewTimesheetPage: React.FC = () => {
                 ))}
               </select>
         )
-      }
+    }
 
     const handleProjectChange = (e: any) => {
         const project = globalProjects.find(project => project._id === e.target.value);

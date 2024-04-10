@@ -7,6 +7,11 @@ export type ProjectDocument = Project & mongoose.HydratedDocument<Project>;
 
 @Schema()
 export class Project {
+   @Prop({
+      unique: true,
+   })
+   id: string;
+
    @Prop()
    title: string;
 

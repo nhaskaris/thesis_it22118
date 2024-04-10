@@ -55,7 +55,39 @@ export async function POST(request: Request) {
     }
 
     if (!res.ok) {
-        return Response.json({message: res.body}, {
+        const message = JSON.parse(await res.text()).message;
+        return Response.json(message, {
+            status: res.status,
+        });
+    }
+
+    return new Response(res.statusText);
+}
+
+export async function PATCH(request: Request) {
+    const cookieStore = cookies()
+    const token = cookieStore.get('token')
+
+    const info: InsertInfo = await request.json();
+
+    const res = await fetch(`${process.env.BACKEND_URL}/users/updateInfo`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: 'Bearer ' + token!.value
+        },
+        body: JSON.stringify(info),
+    })
+
+    if(!res) {
+        return Response.json(res, {
+            status: 500,
+        });
+    }
+
+    if (!res.ok) {
+        const message = JSON.parse(await res.text()).message;
+        return Response.json(message, {
             status: res.status,
         });
     }

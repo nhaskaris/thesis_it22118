@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -170,7 +170,18 @@ export class UsersService {
          return;
       }
 
+      user.isNew = false;
+
       if (insertUserInfoDto.project) {
+         if (
+            await this.projectsService.findOneById(insertUserInfoDto.project.id)
+         ) {
+            throw new HttpException(
+               'Project already exists',
+               HttpStatus.CONFLICT,
+            );
+         }
+
          const newProject = await this.projectsService.create(
             insertUserInfoDto.project,
          );
@@ -202,6 +213,15 @@ export class UsersService {
       }
 
       return user.save();
+   }
+
+   async updateInfo(updateUserInfoDto: InsertUserInfoDto) {
+      if (updateUserInfoDto.project) {
+         await this.projectsService.update(
+            updateUserInfoDto.project.id,
+            updateUserInfoDto.project,
+         );
+      }
    }
 
    async getAllInfo() {

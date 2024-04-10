@@ -22,25 +22,45 @@ export class WpsService {
       return this.wpModel.findById(id).exec();
    }
 
+   findOneByTitle(title: string): Promise<any> {
+      return this.wpModel
+         .findOne({
+            title: title,
+         })
+         .exec();
+   }
+
    deleteAll(): Promise<any> {
       return this.wpModel.deleteMany({}).exec();
    }
 
-   async update(id: string, updateWpDto: UpdateWpDto): Promise<void> {
+   async update(title: string, updateWpDto: UpdateWpDto): Promise<Wp> {
       //get old wp and push new interval
-      const oldWp = await this.findOne(id);
+      const oldWp = await this.findOneByTitle(title);
 
-      const newInterval = updateWpDto.newActiveInterval;
-
-      //check if new interval is valid
-      if (newInterval.startDate > newInterval.endDate) {
-         throw new Error('Start date must be before end date');
+      if (!oldWp) {
+         throw new Error('WP not found');
       }
 
-      oldWp.activeIntervals.push(newInterval);
+      oldWp.isNew = false;
+
+      if (updateWpDto.title == oldWp.title) {
+         throw new Error(`Title ${updateWpDto} already exists`);
+      }
+
+      const newIntervals = updateWpDto.newActiveIntervals;
+      oldWp.activeIntervals = [];
+      for (const newInterval of newIntervals) {
+         //check if new interval is valid
+         if (newInterval.startDate > newInterval.endDate) {
+            throw new Error('Start date must be before end date');
+         }
+
+         oldWp.activeIntervals.push(newInterval);
+      }
 
       //update wp
-      await this.wpModel.updateOne({ _id: id }, oldWp).exec();
+      return await oldWp.save();
    }
 
    async remove(id: string) {

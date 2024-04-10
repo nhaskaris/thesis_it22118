@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,7 +17,15 @@ export class ProjectsService {
    async create(createProjectDto: CreateProjectDto) {
       const ids = [];
       for (const wp of createProjectDto.wps) {
-         ids.push(await this.wpsService.create(wp));
+         try {
+            const newWp = await this.wpsService.create(wp);
+            ids.push(newWp);
+         } catch (error) {
+            throw new HttpException(
+               'Work Package with that title already exists',
+               HttpStatus.CONFLICT,
+            );
+         }
       }
 
       const createdProject = new this.projectModel({
@@ -25,7 +33,7 @@ export class ProjectsService {
          wps: ids,
       });
 
-      return createdProject.save();
+      return await createdProject.save();
    }
 
    findAll() {
@@ -39,14 +47,50 @@ export class ProjectsService {
          .exec();
    }
 
-   async update(id: string, updateProjectDto: UpdateProjectDto) {
-      const oldProject = await this.findOne(id);
+   findOneById(id: string) {
+      return this.projectModel.findOne({ id: id }).exec();
+   }
+
+   async update(
+      id: string,
+      updateProjectDto: UpdateProjectDto | CreateProjectDto,
+   ) {
+      const oldProject = await this.findOneById(id);
 
       if (!oldProject) {
          return 'Project not found';
       }
 
-      oldProject.interval = updateProjectDto.changedActiveInterval;
+      oldProject.isNew = false;
+
+      if (updateProjectDto.title) {
+         oldProject.title = updateProjectDto.title;
+      }
+
+      if (updateProjectDto.description) {
+         oldProject.description = updateProjectDto.description;
+      }
+
+      if (updateProjectDto.interval) {
+         oldProject.interval = updateProjectDto.interval;
+      }
+
+      if (updateProjectDto.wps && updateProjectDto.wps.length > 0) {
+         const ids = [];
+         for (const wp of updateProjectDto.wps) {
+            try {
+               const newWp = await this.wpsService.create(wp);
+               ids.push(newWp);
+            } catch (error) {
+               throw new HttpException(
+                  `Work Package with ${updateProjectDto.title} title already exists`,
+                  HttpStatus.CONFLICT,
+               );
+            }
+         }
+
+         oldProject.wps = ids;
+      }
 
       return oldProject.save();
    }

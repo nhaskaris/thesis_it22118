@@ -34,9 +34,9 @@ export class WpsController {
       return this.wpsService.findOne(id);
    }
 
-   @Patch(':id')
-   update(@Param('id') id: string, @Body() updateWpDto: UpdateWpDto) {
-      return this.wpsService.update(id, updateWpDto);
+   @Patch(':title')
+   update(@Param('title') title: string, @Body() updateWpDto: UpdateWpDto) {
+      return this.wpsService.update(title, updateWpDto);
    }
 
    @Delete()

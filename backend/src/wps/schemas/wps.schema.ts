@@ -6,7 +6,9 @@ export type WpDocument = HydratedDocument<Wp>;
 
 @Schema()
 export class Wp {
-   @Prop()
+   @Prop({
+      unique: true,
+   })
    title: string;
 
    @Prop(

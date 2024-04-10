@@ -1,5 +1,7 @@
 import { Project } from "@/types/pages"
 import { DeleteButton } from "../DeleteButton";
+import { UpdateButton } from "../UpdateButton";
+
 
 //for each work package, we want to display the title of the work package and the interval of the work package
 const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
@@ -15,6 +17,10 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
           <div className="flex items-center justify-between mb-4">
               <div className="text-lg font-bold text-gray-400 ">Project Entry</div>
               <div className="text-sm text-gray-200">{formatUnixTimestamp(project.interval.startDate)} -{' '} {formatUnixTimestamp(project.interval.endDate)}</div>
+          </div>
+          <div className="flex items-center mb-2">
+              <div className="text-sm font-medium text-gray-400 mr-2">ID:</div>
+              <div className="text-sm font-semibold text-gray-200">{project.id}</div>
           </div>
           <div className="flex items-center mb-2">
               <div className="text-sm font-medium text-gray-400 mr-2">Title:</div>
@@ -44,8 +50,10 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
               )}
           </div>
       </div>
-
-      <DeleteButton id={project._id!} endpoint="projects"/>
+      <div className="flex justify-between mb-4">
+          <UpdateButton data={project} url="/projects/updateProject"/>
+          <DeleteButton id={project._id!} endpoint="projects"/>
+      </div>
     </div>
   );
 };

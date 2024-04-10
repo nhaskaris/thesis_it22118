@@ -65,7 +65,8 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                     pathname: "/timesheets/createTimesheet",
                     query: {
                         humans: JSON.stringify(data.humans),
-                        projects: JSON.stringify(data.projects)
+                        projects: JSON.stringify(data.projects),
+                        contracts: JSON.stringify(data.contracts),
                     }
                 }}
                 className="mr-8 py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
