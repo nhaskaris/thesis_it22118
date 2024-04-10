@@ -10,4 +10,5 @@ export class InsertUserInfoDto {
    human?: Human;
    wp?: Wp;
    timesheet?: Timesheet;
+   oldHuman?: Human;
 }

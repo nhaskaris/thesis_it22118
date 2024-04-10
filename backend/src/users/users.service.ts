@@ -222,6 +222,13 @@ export class UsersService {
             updateUserInfoDto.project,
          );
       }
+
+      if (updateUserInfoDto.human) {
+         await this.humansService.update(
+            updateUserInfoDto.oldHuman!.vat,
+            updateUserInfoDto.human,
+         );
+      }
    }
 
    async getAllInfo() {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateHumanDto } from './dto/create-human.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -36,5 +36,22 @@ export class HumansService {
 
    deleteAll() {
       return this.humanModel.deleteMany({}).exec();
+   }
+
+   async update(vat: string, createHumanDto: CreateHumanDto) {
+      const existingHuman = await this.humanModel
+         .findOne({ vat: createHumanDto.vat })
+         .exec();
+
+      if (existingHuman) {
+         throw new HttpException(
+            'Human with that VAT already exists',
+            HttpStatus.CONFLICT,
+         );
+      }
+
+      return this.humanModel
+         .findOneAndUpdate({ vat }, createHumanDto, { new: true })
+         .exec();
    }
 }

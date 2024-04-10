@@ -91,7 +91,7 @@ const NewContractPage: React.FC = () => {
       <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
             <option value="">Select Project</option>
             {projects.map((project: Project) => (
-              <option key={project._id} value={project._id}>{project.title}</option>
+              <option key={project._id} value={project._id}>{project.id}</option>
             ))}
           </select>
     )
