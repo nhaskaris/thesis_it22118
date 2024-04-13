@@ -6,11 +6,11 @@ import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
 
-const NewContractPage: React.FC = () => {
+export default function Home() {
   const [intervalStart, setIntervalStart] = useState('');
   const [duration, setDuration] = useState('');
-  const [hourlyRate, setHourlyRate] = useState<number>();
-  const [totalCost, setTotalCost] = useState<number>();
+  const [hourlyRate, setHourlyRate] = useState<number>(0);
+  const [totalCost, setTotalCost] = useState<number>(0);
   const [selectedPerson, setSelectedPerson] = useState<Human>();
   const [selectedProject, setSelectedProject] = useState<Project>();
   const [selectedWorkPackages, setSelectedWorkPackages] = useState<string[]>([]);
@@ -91,7 +91,9 @@ const NewContractPage: React.FC = () => {
       <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
             <option value="">Select Project</option>
             {projects.map((project: Project) => (
-              <option key={project._id} value={project._id}>{project.id}</option>
+              //project should be active before being displayed
+              
+              Number(project.interval.endDate) > dayjs().unix() ? <option key={project._id} value={project._id}>{project.title}</option> : null
             ))}
           </select>
     )
@@ -128,6 +130,15 @@ const NewContractPage: React.FC = () => {
 
   function Loading() {
     return <h2>🌀 Loading...</h2>;
+  }
+
+  const isActive = (wp: Wp) => {
+    for (const interval of wp.activeIntervals) {
+      if (dayjs().unix() < Number(interval.endDate)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   return (
@@ -192,10 +203,12 @@ const NewContractPage: React.FC = () => {
           <div className="mb-4">
             <label className="block text-sm font-medium text-white">Select Work Packages:</label>
             {selectedProject.wps.map((wp: Wp) => (
-              <div key={wp._id} className="flex items-center">
-                <input type="checkbox" id={wp._id} checked={selectedWorkPackages.includes(wp._id!)} onChange={(e) => handleWorkPackageChange(e, wp._id!)} className="mr-2"/>
-                <label htmlFor={wp._id} className="text-sm text-white">{wp.title}</label>
-              </div>
+              isActive(wp) ? (
+                <div key={wp._id} className="flex items-center">
+                  <input type="checkbox" id={wp._id} checked={selectedWorkPackages.includes(wp._id!)} onChange={(e) => handleWorkPackageChange(e, wp._id!)} className="mr-2"/>
+                  <label htmlFor={wp._id} className="text-sm text-white">{wp.title}</label>
+                </div>
+              ) : <span key={wp._id} className="text-sm text-white">No active intervals for this work package</span>
             ))}
           </div>
         )}
@@ -212,5 +225,3 @@ const NewContractPage: React.FC = () => {
     </div>
   );
 };
-
-export default NewContractPage;
