@@ -1,11 +1,9 @@
-import { Human } from 'src/humans/schemas/humans.schema';
-import { Project } from 'src/projects/schemas/projects.schemas';
-import { Wp } from 'src/wps/schemas/wps.schema';
+import { Contract } from 'src/contracts/schemas/contracts.schema';
+import { Day } from 'src/types/day';
 
 export class CreateTimesheetDto {
-   readonly project: Project;
-   readonly human: Human;
-   readonly date: string;
-   readonly hours: number;
-   readonly wp: Wp;
+   //copy the properties from the Timesheet schema
+   readonly days: Day[];
+   readonly contract: Contract;
+   readonly timestamp_created: string;
 }

@@ -1,6 +1,6 @@
 import { Human } from "@/types/pages";
 import { DeleteButton } from "../DeleteButton";
-import { UpdateButton } from "../UpdateButton";
+import { EditButton } from "../EditButton";
 
 const HumanCard: React.FC<{ human: Human }> = ({ human }) => {
   return (
@@ -19,7 +19,7 @@ const HumanCard: React.FC<{ human: Human }> = ({ human }) => {
           </div>
       </div>
       <div className="flex justify-between mb-4">
-          <UpdateButton data={human} url="/people/updateHuman"/>
+          <EditButton data={human} url="/people/updateHuman"/>
           <DeleteButton id={human._id!} endpoint="humans" />
       </div>
       

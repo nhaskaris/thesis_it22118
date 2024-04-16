@@ -16,6 +16,8 @@ import * as crypto from 'crypto';
 import { InfoAdmin } from 'src/types/userAuthInfoRequest';
 import { TimesheetsService } from 'src/timesheets/timesheets.service';
 import { LinkUserDto } from './dto/link-user.dto';
+import { CreateContractDto } from 'src/contracts/dto/create-contract.dto';
+import { UpdateContractDto } from 'src/contracts/dto/update-contract.dto';
 
 @Injectable()
 export class UsersService {
@@ -103,6 +105,10 @@ export class UsersService {
                {
                   path: 'project',
                   model: 'Project',
+                  populate: {
+                     path: 'wps',
+                     model: Wp.name,
+                  },
                },
                {
                   path: 'human',
@@ -198,7 +204,7 @@ export class UsersService {
 
       if (insertUserInfoDto.contract) {
          const newContract = await this.contractsService.create(
-            insertUserInfoDto.contract,
+            insertUserInfoDto.contract as CreateContractDto,
          );
 
          user.contracts.push(newContract);
@@ -227,6 +233,12 @@ export class UsersService {
          await this.humansService.update(
             updateUserInfoDto.oldHuman!.vat,
             updateUserInfoDto.human,
+         );
+      }
+
+      if (updateUserInfoDto.contract) {
+         await this.contractsService.update(
+            updateUserInfoDto.contract as UpdateContractDto,
          );
       }
    }

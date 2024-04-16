@@ -1,6 +1,6 @@
 import { Project } from "@/types/pages"
 import { DeleteButton } from "../DeleteButton";
-import { UpdateButton } from "../UpdateButton";
+import { EditButton } from "../EditButton";
 
 
 //for each work package, we want to display the title of the work package and the interval of the work package
@@ -51,7 +51,7 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
           </div>
       </div>
       <div className="flex justify-between mb-4">
-          <UpdateButton data={project} url="/projects/updateProject"/>
+          <EditButton data={project} url="/projects/updateProject"/>
           <DeleteButton id={project._id!} endpoint="projects"/>
       </div>
     </div>

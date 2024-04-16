@@ -35,7 +35,7 @@ export class ContractsController {
       @Param('id') id: string,
       @Body() updateContractDto: UpdateContractDto,
    ) {
-      return this.contractsService.update(id, updateContractDto);
+      return this.contractsService.update(updateContractDto);
    }
 
    @Delete(':id')

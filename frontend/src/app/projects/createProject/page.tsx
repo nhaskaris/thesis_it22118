@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
 
-const NewProjectPage: React.FC = () => {
+export default function Home() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [workPackages, setWorkPackages] = useState<Wp[]>([{ title: '', activeIntervals: [] }]);
@@ -313,5 +313,3 @@ const NewProjectPage: React.FC = () => {
     </div>
   );
 };
-
-export default NewProjectPage;

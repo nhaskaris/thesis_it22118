@@ -57,8 +57,13 @@ export default function Home() {
       }
     });
 
+    if (!res.ok) {
+      return setAlert({ message: 'Failed to create contract', severity: 'error', visible: true, onClose: () => setAlert(null)});
+    }
+
     window.location.href = '/contracts';
   };
+  
 
   const globalProjects: Project[] = [];
   const globalHumans: Human[] = [];

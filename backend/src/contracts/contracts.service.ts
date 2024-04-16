@@ -24,7 +24,12 @@ export class ContractsService {
    async findAll() {
       return await this.contractModel
          .find()
-         .populate('project')
+         .populate({
+            path: 'project',
+            populate: {
+               path: 'wps',
+            },
+         })
          .populate('human')
          .populate('wps')
          .exec();
@@ -34,8 +39,14 @@ export class ContractsService {
       return `This action returns a #${id} contract`;
    }
 
-   update(id: string, updateContractDto: UpdateContractDto) {
-      return `This action updates a #${updateContractDto} contract`;
+   update(updateContractDto: UpdateContractDto) {
+      //dto includes id to update with new values
+
+      return this.contractModel.findByIdAndUpdate(
+         updateContractDto.id,
+         updateContractDto,
+         { new: true },
+      );
    }
 
    async remove(id: string) {

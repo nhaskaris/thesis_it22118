@@ -1,28 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { Wp } from '../../wps/schemas/wps.schema';
-import { Project } from 'src/projects/schemas/projects.schemas';
-import { Human } from 'src/humans/schemas/humans.schema';
+import { Contract } from 'src/contracts/schemas/contracts.schema';
+import { Day } from 'src/types/day';
 
 export type TimesheetsDocument = Timesheet &
    mongoose.HydratedDocument<Timesheet>;
 
 @Schema()
 export class Timesheet {
+   @Prop({
+      raw: [
+         {
+            timestamp: { type: String },
+            hoursWorked: { type: Number },
+            _id: false,
+         },
+      ],
+   })
+   days: Day[];
+
+   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' })
+   contract: Contract;
+
    @Prop()
-   hours: number;
-
-   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Project' })
-   project: Project;
-
-   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Human' })
-   human: Human;
-
-   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Wp' })
-   wp: Wp;
-
-   @Prop()
-   date: string;
+   timestamp_created: string;
 }
 
 export const TimesheetSchema = SchemaFactory.createForClass(Timesheet);

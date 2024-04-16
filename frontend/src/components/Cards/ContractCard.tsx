@@ -1,12 +1,12 @@
 import React from "react";
 import { DeleteButton } from "../DeleteButton"; // Assuming DeleteButton is already defined
 import { Contract } from "@/types/pages";
+import { EditButton } from "../EditButton";
 
 const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
   const formatUnixTimestamp = (timestamp: string): string => {
     return new Date(parseInt(timestamp)).toLocaleDateString();
   };
-
   return (
         <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
           <div className="px-6 py-4">
@@ -44,8 +44,11 @@ const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
                   <div className="text-sm font-semibold text-gray-200">{contract._id}</div>
               </div>
           </div>
-
-          <DeleteButton id={contract._id!} endpoint="contracts" />
+          
+          <div className="flex justify-between mb-4">
+              <EditButton data={contract} url="/contracts/updateContract"/>        
+              <DeleteButton id={contract._id!} endpoint="contracts" />
+          </div>
         </div>
   );
 };
