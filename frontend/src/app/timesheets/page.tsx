@@ -5,7 +5,6 @@ import Link from "next/link";
 import TimesheetCard from '@/components/Cards/TimesheetCard';
 import SearchBar from '@/components/SearchBar';
 
-
 async function getData() {
     const userCookies = cookies().get('token')
 
@@ -42,11 +41,49 @@ async function getData() {
     return data
 }
 
+async function getHolidays() {
+    const userCookies = cookies().get('token')
+
+    if (!userCookies) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: true
+            }
+        }
+    }
+
+    const res = await fetch(`${process.env.BACKEND_URL}/holidays/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            authorization: 'Bearer ' + userCookies.value!
+        }
+    })
+
+    if(!res) {
+        return Response.json('Internal Server Error', {
+            status: 500,
+        });
+    }
+
+    if (!res.ok) {
+        return Response.json({message: res.body}, {
+            status: res.status,
+        });
+    }
+
+    const holidays = await res.json();
+
+    return holidays
+
+}
+
 export default async function Home({searchParams}: {searchParams: {q: string}}) {
     const data: User = await getData();
+    const holidays = await getHolidays();
 
     let filteredTimesheets = data.timesheets
-
 
     if (searchParams.q) {
         filteredTimesheets = filteredTimesheets.filter((timesheet) => {
@@ -64,9 +101,8 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 href={{
                     pathname: "/timesheets/createTimesheet",
                     query: {
-                        humans: JSON.stringify(data.humans),
-                        projects: JSON.stringify(data.projects),
-                        contracts: JSON.stringify(data.contracts),
+                        data: JSON.stringify(data.contracts),
+                        holidays: JSON.stringify(holidays)
                     }
                 }}
                 className="mr-8 py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

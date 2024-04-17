@@ -5,14 +5,14 @@ export type HumanDocument = HydratedDocument<Human>;
 
 @Schema()
 export class Human {
-   @Prop()
-   lastName: string;
+  @Prop()
+  lastName: string;
 
-   @Prop()
-   firstName: string;
+  @Prop()
+  firstName: string;
 
-   @Prop()
-   vat: string;
+  @Prop()
+  vat: string;
 }
 
 export const HumanSchema = SchemaFactory.createForClass(Human);

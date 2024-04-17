@@ -64,10 +64,21 @@ export interface Contract {
 }
 
 export interface Timesheet {
-    human: Human;
-    project: Project;
-    wp: Wp;
-    date: string;
-    hours: number;
+    days: Day[];
+    contract: Contract;
+    timestamp_created: string;
     _id?: string;
+}
+
+export interface Day {
+    hoursWorked: number;
+    date: string;
+}
+
+export interface Holiday {
+    dateIso: string;
+    description: string;
+    _id?: string;
+    name: string;
+    type: string[];
 }

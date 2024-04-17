@@ -6,8 +6,8 @@ import { Human } from 'src/humans/schemas/humans.schema';
 import { Wp } from 'src/wps/schemas/wps.schema';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-   projects?: Project[];
-   contracts?: Contract[];
-   humans?: Human[];
-   wps?: Wp[];
+  projects?: Project[];
+  contracts?: Contract[];
+  humans?: Human[];
+  wps?: Wp[];
 }

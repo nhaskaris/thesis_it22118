@@ -6,10 +6,10 @@ import { Timesheet } from 'src/timesheets/schemas/timesheets.schemas';
 import { Wp } from 'src/wps/schemas/wps.schema';
 
 export class InsertUserInfoDto {
-   project?: Project;
-   contract?: CreateContractDto | UpdateContractDto;
-   human?: Human;
-   wp?: Wp;
-   timesheet?: Timesheet;
-   oldHuman?: Human;
+  project?: Project;
+  contract?: CreateContractDto | UpdateContractDto;
+  human?: Human;
+  wp?: Wp;
+  timesheet?: Timesheet;
+  oldHuman?: Human;
 }

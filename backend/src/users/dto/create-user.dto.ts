@@ -1,4 +1,4 @@
 export class CreateUserDto {
-   email: string;
-   role: string;
+  email: string;
+  role: string;
 }

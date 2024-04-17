@@ -4,26 +4,26 @@ import { Contract } from 'src/contracts/schemas/contracts.schema';
 import { Day } from 'src/types/day';
 
 export type TimesheetsDocument = Timesheet &
-   mongoose.HydratedDocument<Timesheet>;
+  mongoose.HydratedDocument<Timesheet>;
 
 @Schema()
 export class Timesheet {
-   @Prop({
-      raw: [
-         {
-            timestamp: { type: String },
-            hoursWorked: { type: Number },
-            _id: false,
-         },
-      ],
-   })
-   days: Day[];
+  @Prop({
+    raw: [
+      {
+        timestamp: { type: String },
+        hoursWorked: { type: Number },
+        _id: false,
+      },
+    ],
+  })
+  days: Day[];
 
-   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' })
-   contract: Contract;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' })
+  contract: Contract;
 
-   @Prop()
-   timestamp_created: string;
+  @Prop()
+  timestamp_created: string;
 }
 
 export const TimesheetSchema = SchemaFactory.createForClass(Timesheet);

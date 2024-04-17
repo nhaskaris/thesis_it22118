@@ -11,17 +11,17 @@ import { HumansModule } from 'src/humans/humans.module';
 import { TimesheetsModule } from 'src/timesheets/timesheets.module';
 
 @Module({
-   imports: [
-      MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-      AuthModule,
-      ProjectsModule,
-      ContractsModule,
-      WpsModule,
-      HumansModule,
-      TimesheetsModule,
-   ],
-   controllers: [UsersController],
-   providers: [UsersService],
-   exports: [UsersService],
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    AuthModule,
+    ProjectsModule,
+    ContractsModule,
+    WpsModule,
+    HumansModule,
+    TimesheetsModule,
+  ],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

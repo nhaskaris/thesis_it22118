@@ -8,18 +8,22 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TimesheetsModule } from './timesheets/timesheets.module';
+import { HolidaysModule } from './holidays/holidays.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-   imports: [
-      ConfigModule.forRoot(),
-      MongooseModule.forRoot(process.env.MONGO_URL!),
-      WpsModule,
-      ProjectsModule,
-      HumansModule,
-      ContractsModule,
-      UsersModule,
-      AuthModule,
-      TimesheetsModule,
-   ],
+  imports: [
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URL!),
+    WpsModule,
+    ProjectsModule,
+    HumansModule,
+    ContractsModule,
+    UsersModule,
+    AuthModule,
+    TimesheetsModule,
+    HolidaysModule,
+    ScheduleModule.forRoot(),
+  ],
 })
 export class AppModule {}

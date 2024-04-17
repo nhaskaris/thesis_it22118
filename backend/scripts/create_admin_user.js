@@ -5,7 +5,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const admin = require('firebase-admin');
 const crypto = require('node:crypto');
 
-const adminEmail = 'nhaskaris@hua.gr';
+const adminEmail = 'nickhaskaris@gmail.com';
 
 const generatePassword = (
    length = 30,

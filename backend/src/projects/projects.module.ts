@@ -6,14 +6,12 @@ import { ProjectSchema, Project } from './schemas/projects.schemas';
 import { WpsModule } from 'src/wps/wps.module';
 
 @Module({
-   imports: [
-      MongooseModule.forFeature([
-         { name: Project.name, schema: ProjectSchema },
-      ]),
-      WpsModule,
-   ],
-   controllers: [ProjectsController],
-   providers: [ProjectsService],
-   exports: [ProjectsService],
+  imports: [
+    MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
+    WpsModule,
+  ],
+  controllers: [ProjectsController],
+  providers: [ProjectsService],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

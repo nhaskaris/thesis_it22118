@@ -5,13 +5,13 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 
 async function bootstrap() {
-   const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
 
-   const authService = app.get(AuthService);
-   const usersService = app.get(UsersService);
-   app.useGlobalGuards(
-      new AuthGuard(new Reflector(), authService, usersService),
-   );
-   await app.listen(process.env.PORT || 3000);
+  const authService = app.get(AuthService);
+  const usersService = app.get(UsersService);
+  app.useGlobalGuards(
+    new AuthGuard(new Reflector(), authService, usersService),
+  );
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

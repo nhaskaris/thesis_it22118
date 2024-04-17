@@ -7,32 +7,32 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class TimesheetsService {
-   constructor(
-      @InjectModel('Timesheet') private timesheetModel: Model<Timesheet>,
-   ) {}
+  constructor(
+    @InjectModel('Timesheet') private timesheetModel: Model<Timesheet>,
+  ) {}
 
-   async create(createTimesheetDto: CreateTimesheetDto) {
-      return await this.timesheetModel.create(createTimesheetDto);
-   }
+  async create(createTimesheetDto: CreateTimesheetDto) {
+    return await this.timesheetModel.create(createTimesheetDto);
+  }
 
-   async findAll() {
-      return await this.timesheetModel
-         .find()
-         .populate('project')
-         .populate('human')
-         .populate('wp')
-         .exec();
-   }
+  async findAll() {
+    return await this.timesheetModel
+      .find()
+      .populate('project')
+      .populate('human')
+      .populate('wp')
+      .exec();
+  }
 
-   async findOne(id: string) {
-      return await this.timesheetModel.findById(id).exec;
-   }
+  async findOne(id: string) {
+    return await this.timesheetModel.findById(id).exec;
+  }
 
-   update(id: string, updateTimesheetDto: UpdateTimesheetDto) {
-      return `This action updates a #${updateTimesheetDto} timesheet`;
-   }
+  update(id: string, updateTimesheetDto: UpdateTimesheetDto) {
+    return `This action updates a #${updateTimesheetDto} timesheet`;
+  }
 
-   async remove(id: string) {
-      return await this.timesheetModel.findByIdAndDelete(id).exec();
-   }
+  async remove(id: string) {
+    return await this.timesheetModel.findByIdAndDelete(id).exec();
+  }
 }

@@ -1,4 +1,4 @@
 export interface Interval {
-   startDate: string;
-   endDate: string;
+  startDate: string;
+  endDate: string;
 }

@@ -6,52 +6,52 @@ import { Human } from './schemas/humans.schema';
 
 @Injectable()
 export class HumansService {
-   constructor(@InjectModel('Human') private humanModel: Model<Human>) {}
+  constructor(@InjectModel('Human') private humanModel: Model<Human>) {}
 
-   async create(createHumanDto: CreateHumanDto) {
-      const existingHuman = await this.humanModel
-         .findOne({ vat: createHumanDto.vat })
-         .exec();
+  async create(createHumanDto: CreateHumanDto) {
+    const existingHuman = await this.humanModel
+      .findOne({ vat: createHumanDto.vat })
+      .exec();
 
-      if (existingHuman) {
-         return existingHuman;
-      }
+    if (existingHuman) {
+      return existingHuman;
+    }
 
-      const createdHuman = new this.humanModel(createHumanDto);
+    const createdHuman = new this.humanModel(createHumanDto);
 
-      return createdHuman.save();
-   }
+    return createdHuman.save();
+  }
 
-   findAll() {
-      return this.humanModel.find().exec();
-   }
+  findAll() {
+    return this.humanModel.find().exec();
+  }
 
-   findOne(id: string) {
-      return this.humanModel.findById(id).exec();
-   }
+  findOne(id: string) {
+    return this.humanModel.findById(id).exec();
+  }
 
-   remove(id: string) {
-      return this.humanModel.findByIdAndDelete(id).exec();
-   }
+  remove(id: string) {
+    return this.humanModel.findByIdAndDelete(id).exec();
+  }
 
-   deleteAll() {
-      return this.humanModel.deleteMany({}).exec();
-   }
+  deleteAll() {
+    return this.humanModel.deleteMany({}).exec();
+  }
 
-   async update(vat: string, createHumanDto: CreateHumanDto) {
-      const existingHuman = await this.humanModel
-         .findOne({ vat: createHumanDto.vat })
-         .exec();
+  async update(vat: string, createHumanDto: CreateHumanDto) {
+    const existingHuman = await this.humanModel
+      .findOne({ vat: createHumanDto.vat })
+      .exec();
 
-      if (existingHuman) {
-         throw new HttpException(
-            'Human with that VAT already exists',
-            HttpStatus.CONFLICT,
-         );
-      }
+    if (existingHuman) {
+      throw new HttpException(
+        'Human with that VAT already exists',
+        HttpStatus.CONFLICT,
+      );
+    }
 
-      return this.humanModel
-         .findOneAndUpdate({ vat }, createHumanDto, { new: true })
-         .exec();
-   }
+    return this.humanModel
+      .findOneAndUpdate({ vat }, createHumanDto, { new: true })
+      .exec();
+  }
 }

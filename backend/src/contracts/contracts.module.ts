@@ -7,15 +7,15 @@ import { ProjectsModule } from 'src/projects/projects.module';
 import { WpsModule } from 'src/wps/wps.module';
 
 @Module({
-   imports: [
-      MongooseModule.forFeature([
-         { name: Contract.name, schema: ContractSchema },
-      ]),
-      ProjectsModule,
-      WpsModule,
-   ],
-   controllers: [ContractsController],
-   providers: [ContractsService],
-   exports: [ContractsService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Contract.name, schema: ContractSchema },
+    ]),
+    ProjectsModule,
+    WpsModule,
+  ],
+  controllers: [ContractsController],
+  providers: [ContractsService],
+  exports: [ContractsService],
 })
 export class ContractsModule {}

@@ -7,13 +7,13 @@ import { Human } from 'src/humans/schemas/humans.schemas';
 import { Timesheet } from 'src/timesheets/schemas/timesheets.schemas';
 
 export interface IGetUserAuthInfoRequest extends Request {
-   user?: User;
+  user?: User;
 }
 
 export interface InfoAdmin {
-   projects: Project[];
-   contracts: Contract[];
-   wps: Wp[];
-   humans: Human[];
-   timesheets: Timesheet[];
+  projects: Project[];
+  contracts: Contract[];
+  wps: Wp[];
+  humans: Human[];
+  timesheets: Timesheet[];
 }

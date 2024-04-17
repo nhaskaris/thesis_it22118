@@ -9,31 +9,31 @@ export type UserDocument = User & mongoose.HydratedDocument<User>;
 
 @Schema()
 export class User {
-   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }] })
-   projects: Project[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }] })
+  projects: Project[];
 
-   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Human' }] })
-   humans: Human[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Human' }] })
+  humans: Human[];
 
-   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' }] })
-   contracts: Contract[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contract' }] })
+  contracts: Contract[];
 
-   @Prop({
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Timesheet' }],
-   })
-   timesheets: Timesheet[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Timesheet' }],
+  })
+  timesheets: Timesheet[];
 
-   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
-   linked_users: User[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  linked_users: User[];
 
-   @Prop()
-   email: string;
+  @Prop()
+  email: string;
 
-   @Prop()
-   uid: string;
+  @Prop()
+  uid: string;
 
-   @Prop()
-   role: string;
+  @Prop()
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
