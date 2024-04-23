@@ -79,7 +79,8 @@ export default function TimesheetCreation({ selectedContract, holidays }: { sele
           });
       
           if (!res.ok) {
-            return setAlert({ message: 'Failed to create timesheet', severity: 'error', visible: true, onClose: () => setAlert(null)});
+            const resData = await res.text();
+            return setAlert({ message: resData, severity: 'error', visible: true, onClose: () => setAlert(null)});
           }
       
           window.location.href = '/timesheets';
