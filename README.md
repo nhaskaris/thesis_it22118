@@ -13,7 +13,7 @@
 
 ## Tech Stack Versions
 - **Node.js**: `v20.9.0`
-- **npm**: `10.2.5`
+- **npm**: `10.5.2`
 - **NestJS**: `10.2.0`
 - **NextJS**: `v14.1.3`
 - **MongoDB**: `7.0.6`

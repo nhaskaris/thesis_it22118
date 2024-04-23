@@ -1,4 +1,4 @@
 export interface Day {
-  timestamp: string;
+  date: string;
   hoursWorked: number;
 }
