@@ -10,5 +10,6 @@ import { Holiday, HolidaySchema } from './schemas/holiday.schema';
   ],
   controllers: [HolidaysController],
   providers: [HolidaysService],
+  exports: [HolidaysService],
 })
 export class HolidaysModule {}
