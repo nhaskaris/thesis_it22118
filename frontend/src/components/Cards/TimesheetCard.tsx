@@ -1,8 +1,9 @@
-import { Timesheet } from '@/types/pages';
+import { Holiday, Timesheet } from '@/types/pages';
 import React from 'react';
 import { DeleteButton } from "../DeleteButton";
+import { EditButton } from '../EditButton';
 
-const TimesheetCard: React.FC<{ timesheet: Timesheet}> = ({ timesheet }) => {
+const TimesheetCard: React.FC<{ timesheet: Timesheet, holidays: Holiday[]}> = ({ timesheet, holidays }) => {
     const formatUnixTimestamp = (timestamp: string): string => {
         return new Date(parseInt(timestamp)).toLocaleDateString();
     };
@@ -29,7 +30,11 @@ const TimesheetCard: React.FC<{ timesheet: Timesheet}> = ({ timesheet }) => {
                     <div className="text-sm font-semibold text-gray-200">{timesheet.contract.project.title}, {timesheet.contract.human.lastName} {timesheet.contract.human.firstName}</div>
                 </div>
             </div>
-            <DeleteButton id={timesheet._id!} endpoint="timesheets"/>
+            
+            <div className="flex justify-between mb-4">
+                <EditButton data={timesheet} url="/timesheets/updateTimesheet" holidays={holidays}/>
+                <DeleteButton id={timesheet._id!} endpoint="timesheets"/>
+            </div>
         </div>
     );
 };

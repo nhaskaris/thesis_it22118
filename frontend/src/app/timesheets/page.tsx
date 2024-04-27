@@ -113,7 +113,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
             <SearchBar items={filteredTimesheets} endpoint='timesheets'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredTimesheets && filteredTimesheets.map((timesheet) => (
-                    <TimesheetCard key={timesheet._id} timesheet={timesheet} />
+                    <TimesheetCard key={timesheet._id} timesheet={timesheet} holidays={holidays}/>
                 ))}
             </div>
         </div>

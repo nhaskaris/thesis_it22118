@@ -18,6 +18,8 @@ import { TimesheetsService } from 'src/timesheets/timesheets.service';
 import { LinkUserDto } from './dto/link-user.dto';
 import { CreateContractDto } from 'src/contracts/dto/create-contract.dto';
 import { UpdateContractDto } from 'src/contracts/dto/update-contract.dto';
+import { UpdateTimesheetDto } from 'src/timesheets/dto/update-timesheet.dto';
+import { CreateTimesheetDto } from 'src/timesheets/dto/create-timesheet.dto';
 
 @Injectable()
 export class UsersService {
@@ -213,7 +215,7 @@ export class UsersService {
 
     if (insertUserInfoDto.timesheet) {
       const newTimesheet = await this.timesheetsService.create(
-        insertUserInfoDto.timesheet,
+        insertUserInfoDto.timesheet as CreateTimesheetDto,
       );
 
       user.timesheets.push(newTimesheet);
@@ -240,6 +242,12 @@ export class UsersService {
     if (updateUserInfoDto.contract) {
       await this.contractsService.update(
         updateUserInfoDto.contract as UpdateContractDto,
+      );
+    }
+
+    if (updateUserInfoDto.timesheet) {
+      await this.timesheetsService.update(
+        updateUserInfoDto.timesheet as UpdateTimesheetDto,
       );
     }
   }

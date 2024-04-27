@@ -30,12 +30,9 @@ export class TimesheetsController {
     return this.timesheetsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTimesheetDto: UpdateTimesheetDto,
-  ) {
-    return this.timesheetsService.update(id, updateTimesheetDto);
+  @Patch()
+  update(@Body() updateTimesheetDto: UpdateTimesheetDto) {
+    return this.timesheetsService.update(updateTimesheetDto);
   }
 
   @Delete(':id')

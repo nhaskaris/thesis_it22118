@@ -54,15 +54,24 @@ export class TimesheetsService {
     return await this.timesheetModel.findById(id).exec;
   }
 
-  update(id: string, updateTimesheetDto: UpdateTimesheetDto) {
-    return `This action updates a #${updateTimesheetDto} timesheet`;
+  async update(updateTimesheetDto: UpdateTimesheetDto) {
+    //find the timesheet by id and update it
+    if (!updateTimesheetDto._id) {
+      throw new HttpException(
+        `Timesheet id is required`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return await this.timesheetModel
+      .findByIdAndUpdate(updateTimesheetDto._id, updateTimesheetDto)
+      .exec();
   }
 
   async remove(id: string) {
     return await this.timesheetModel.findByIdAndDelete(id).exec();
   }
 
-  //Implement a method that based on similar contracts, get all timesheets of a specific human. Count the total hours.
   async exceedTotal(contract: Contract, days: Day[]): Promise<number> {
     const timesheets = await this.timesheetModel
       .find({

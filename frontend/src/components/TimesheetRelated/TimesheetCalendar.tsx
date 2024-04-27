@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { generateCalendar } from '@/tools/utils';
-import { AlertInfo, Contract, Holiday } from "@/types/pages";
+import { AlertInfo, Contract, Day, Holiday } from "@/types/pages";
 import AddHoursPopup from '@/components/TimesheetRelated/TimesheetPopUp';
 import Alert from '@/components/Alert';
 
 
-export default function TimesheetCreation({ selectedContract, holidays }: { selectedContract: Contract, holidays: Holiday[]}) {
+export default function TimesheetCreation({ selectedContract, holidays, days, timesheet_id }: { selectedContract: Contract, holidays: Holiday[], days?: Day[], timesheet_id?: string}) {
     const activeWps = [];
     const unixDate = new Date().getTime();
 
@@ -18,10 +18,18 @@ export default function TimesheetCreation({ selectedContract, holidays }: { sele
         }
     }
 
+    const hoursdata:{ [key: number]: number } = {};
+
+    if(days) {
+        for(const day of days) {
+            hoursdata[Number(day.date)] = day.hoursWorked;
+        }
+    }
+
     const currentDate = new Date();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isAddHoursPopupOpen, setIsAddHoursPopupOpen] = useState(false);
-    const [hoursData, setHoursData] = useState<{ [key: number]: number }>({});
+    const [hoursData, setHoursData] = useState<{ [key: number]: number }>(hoursdata);
     const [allowWeekendClick, setAllowWeekendClick] = useState(false);
     const calendar = generateCalendar(currentDate.getFullYear(), currentDate.getMonth(), holidays);
     const [alert, setAlert] = useState<AlertInfo | null>(null);
@@ -67,11 +75,12 @@ export default function TimesheetCreation({ selectedContract, holidays }: { sele
         const timesheet = {
             days: daysData,
             contract: selectedContract,
-            timestamp_created: new Date().getTime()
+            timestamp_created: new Date().getTime(),
+            _id: timesheet_id
         };
 
         const res = await fetch('/api', { 
-            method: 'POST', 
+            method: 'PATCH', 
             body: JSON.stringify({"timesheet": timesheet}), 
             headers: { 
                 'Content-Type': 'application/json' 
@@ -92,7 +101,8 @@ export default function TimesheetCreation({ selectedContract, holidays }: { sele
     }, [hoursData]);
 
     return (
-        <div className="p-4">
+        <div>
+            <br />
             <h2 className="text-2xl font-bold mb-4">Timesheet for {selectedContract.project.title}</h2>
             <label>
                 <input 
@@ -134,7 +144,7 @@ export default function TimesheetCreation({ selectedContract, holidays }: { sele
             {totalHoursForMonth > 143 && <p className="text-red-500">Warning: Total hours for the month exceed 143 hours.</p>}
             <div className="flex justify-end mt-4">
                 <button type='button' className="bg-red-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleCancel}>Cancel</button>
-                <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Create</button>
+                <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Edit</button>
             </div>
             {isAddHoursPopupOpen && (
                 <AddHoursPopup selectedDate={selectedDate!} onClose={handleClosePopup} wps={activeWps} onHoursDataChange={handleHoursDataChange}/>

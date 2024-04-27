@@ -1,19 +1,19 @@
-import { Contract, Human, Project, Timesheet } from "@/types/pages";
+import { Contract, Holiday, Human, Project, Timesheet } from "@/types/pages";
 import Link from "next/link";
 
 interface EditButtonProps {
     data: Project | Human | Contract | Timesheet;
     url: string;
+    holidays?: Holiday[];
 }
 
 export const EditButton = (props: EditButtonProps) => {
+    const query = props.holidays ? {data: JSON.stringify(props.data), holidays: JSON.stringify(props.holidays)} : {data: JSON.stringify(props.data)};
     return (
         <Link
           href={{
               pathname: props.url,
-              query: {
-                  data: JSON.stringify(props.data)
-              }
+              query: query
           }}
           className="float-right mt-4 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         >
