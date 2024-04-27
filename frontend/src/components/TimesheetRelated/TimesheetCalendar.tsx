@@ -80,7 +80,7 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
         };
 
         const res = await fetch('/api', { 
-            method: 'PATCH', 
+            method: timesheet_id ? 'PATCH' : 'POST', 
             body: JSON.stringify({"timesheet": timesheet}), 
             headers: { 
                 'Content-Type': 'application/json' 
