@@ -72,7 +72,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Create Contract
                 </Link>
             </div>
-            <SearchBar items={filteredContracts} endpoint='contracts'/>
+            <SearchBar items={filteredContracts} endpoint='contracts' placeholder='by id'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredContracts && filteredContracts.map((contract) => (
                     <ContractCard key={contract._id} contract={contract} />

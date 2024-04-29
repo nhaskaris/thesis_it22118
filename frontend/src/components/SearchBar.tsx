@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 interface SearchBarProps<T> {
     items: any[];
     endpoint: string;
+    placeholder: string;
 }
 
-function SearchBar<T>({ items, endpoint}: SearchBarProps<T>) {
+function SearchBar<T>({ items, endpoint, placeholder}: SearchBarProps<T>) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState(items);
 
     const router = useRouter();
 
@@ -19,12 +19,13 @@ function SearchBar<T>({ items, endpoint}: SearchBarProps<T>) {
         router.push(`/${endpoint}?q=` + event.target.value);
     };
 
+    placeholder = 'Search ' + placeholder;
     return (
-        items && items.length > 0 && (
+        (items && items.length > 0 || searchTerm != ' ') && (
             <div className="flex justify-center items-center mb-4">
                 <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder={placeholder}
                     value={searchTerm}
                     onChange={handleChange}
                     className="w-1/2 p-2 border border-gray-300 rounded-md shadow-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

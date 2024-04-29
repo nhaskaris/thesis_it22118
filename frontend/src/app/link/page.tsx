@@ -65,7 +65,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Create Link
                 </Link>
             </div>
-            <SearchBar items={filteredLinkedUsers} endpoint={'link'} />
+            <SearchBar items={filteredLinkedUsers} endpoint={'link'} placeholder='by email'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ml-4">
                 {filteredLinkedUsers && filteredLinkedUsers.map((linkedUser) => (
                     <LinkedUserCard key={linkedUser} email={linkedUser} />

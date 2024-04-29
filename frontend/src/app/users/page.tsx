@@ -63,7 +63,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Insert User
                 </Link>
             </div>
-            <SearchBar items={filteredUsers} endpoint='users'/>
+            <SearchBar items={filteredUsers} endpoint='users' placeholder='by email'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredUsers && filteredUsers.map((user) => (
                     <UserCard key={user._id} user={user} />

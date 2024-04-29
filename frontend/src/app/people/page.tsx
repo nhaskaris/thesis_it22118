@@ -69,7 +69,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Insert Human
                 </Link>
             </div>
-            <SearchBar items={filteredHumans} endpoint='people'/>
+            <SearchBar items={filteredHumans} endpoint='people' placeholder='by vat'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredHumans && filteredHumans.map((human) => (
                     <HumanCard key={human._id} human={human} />

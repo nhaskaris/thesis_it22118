@@ -67,7 +67,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Create Project
                 </Link>
             </div>
-            <SearchBar items={filteredProjects} endpoint='projects'/>
+            <SearchBar items={filteredProjects} endpoint='projects' placeholder="by title"/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredProjects && filteredProjects.length > 0 && filteredProjects.map((project) => (
                     <ProjectCard key={project._id} project={project} />

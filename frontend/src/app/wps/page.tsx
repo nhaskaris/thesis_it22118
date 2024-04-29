@@ -64,7 +64,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                 Insert Wp
                 </Link> */}
             </div>
-            <SearchBar items={filteredWps} endpoint='wps'/>
+            <SearchBar items={filteredWps} endpoint='wps' placeholder='by title'/>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {filteredWps && filteredWps.map((wp) => (
                     <WPCard key={wp._id} wp={wp} />
