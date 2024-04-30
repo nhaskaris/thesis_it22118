@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
@@ -15,6 +15,8 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState<Project>();
   const [selectedWorkPackages, setSelectedWorkPackages] = useState<string[]>([]);
   const [alert, setAlert] = useState<AlertInfo | null>(null);
+  const [workHours, setWorkHours] = useState<number>(0);
+  const [workMonths, setWorkMonths] = useState<number>(0);
   
   const router = useRouter();
 
@@ -32,8 +34,8 @@ export default function Home() {
       }
     }
 
-    if (hourlyRate! * 143* Number(duration) > totalCost!) {
-      setAlert({ message: `Hourly Rate ${hourlyRate} * ${duration} months exceeds total cost of contract ${totalCost}$`, severity: 'error', visible: true, onClose: () => setAlert(null)});
+    if (workMonths > Number(duration)) {
+      setAlert({ message: `Working months exceed duration of contract`, severity: 'error', visible: true, onClose: () => setAlert(null)});
       return;
     }
 
@@ -96,8 +98,6 @@ export default function Home() {
       <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
           <option value="">Select Project</option>
           {projects.map((project: Project) => (
-            //project should be active before being displayed
-            
             Number(project.interval.endDate) > dayjs().unix() ? <option key={project._id} value={project._id}>{project.title}</option> : null
           ))}
       </select>
@@ -146,10 +146,40 @@ export default function Home() {
     return false;
   }
 
+  useEffect(() => {
+    if (selectedProject) {
+      // Set the start date of the contract to the start date of the project interval
+      setIntervalStart(dayjs(Number(selectedProject.interval.startDate)).format('YYYY-MM-DD'));
+
+      // Set the default duration of the contract to the duration of the project interval
+      setDuration(String(dayjs(Number(selectedProject.interval.endDate)).diff(Number(selectedProject.interval.startDate), 'month')));
+    }
+  }, [selectedProject]);
+
+  useEffect(() => {
+    //calculate the work hours and work months
+    setWorkHours(Math.round(totalCost / hourlyRate));
+    setWorkMonths(Math.floor(workHours / 143 * 10) / 10 + 1);
+  }, [hourlyRate, totalCost, duration, workHours]);
+
   return (
     <div className="container mx-auto py-8 border border-gray-300 rounded-md shadow-md p-8 mt-2 bg-gray-800">
       <h1 className="text-3xl font-semibold mb-4">Create a New Contract</h1>
       <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="selectedPerson" className="block text-sm font-medium text-white">Select Person:</label>
+          <Suspense fallback={<Loading />}>
+            <GetSearchParamsHumans />
+          </Suspense>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="selectedProject" className="block text-sm font-medium text-white">Select Project:</label>
+          <Suspense fallback={<Loading />}>
+            <GetSearchParamsProjects />
+          </Suspense>
+        </div>
+
         <div className="grid grid-cols-2 gap-4 mb-2">
             <div>
               <label htmlFor="intervalStart" className="block text-sm font-medium text-white-700">
@@ -162,7 +192,6 @@ export default function Home() {
                 value={intervalStart}
                 onChange={(e) => setIntervalStart(e.target.value)}
                 required
-                min={dayjs().format('YYYY-MM-DD')}
               />
             </div>
             <div>
@@ -178,7 +207,7 @@ export default function Home() {
                 required
               />
             </div>
-          </div>
+        </div>
         
         <div className="mb-4">
           <label htmlFor="hourlyCost" className="block text-sm font-medium text-white">Hourly Rate:</label>
@@ -188,20 +217,6 @@ export default function Home() {
         <div className="mb-4">
           <label htmlFor="totalCost" className="block text-sm font-medium text-white">Total Cost:</label>
           <input type="number" id="totalCost" value={totalCost} onChange={(e) => setTotalCost(Number(e.target.value))} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900" />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="selectedPerson" className="block text-sm font-medium text-white">Select Person:</label>
-          <Suspense fallback={<Loading />}>
-            <GetSearchParamsHumans />
-          </Suspense>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="selectedProject" className="block text-sm font-medium text-white">Select Project:</label>
-          <Suspense fallback={<Loading />}>
-            <GetSearchParamsProjects />
-          </Suspense>
         </div>
 
         {selectedProject && (
@@ -215,6 +230,20 @@ export default function Home() {
                 </div>
               ) : <span key={wp._id} className="text-sm text-white">No active intervals for this work package</span>
             ))}
+          </div>
+        )}
+
+        {workHours > 0 && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-white">Total Work Hours:</label>
+            <span className="text-sm text-white">{workHours}</span>
+          </div>
+        )}
+
+        {workMonths > 0 && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-white">Total Work Months:</label>
+            <span className="text-sm text-white">{workMonths}</span>
           </div>
         )}
 
