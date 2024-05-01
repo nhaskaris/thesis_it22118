@@ -4,7 +4,8 @@ import { Project } from '../../types/pages';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
-
+import {GanttChart} from "@/components/GanttChart";
+import { Task } from 'gantt-task-react';
 
 async function getData() {
     const userCookies = cookies().get('token')
@@ -56,6 +57,24 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
         filteredProjects = projects;
     }
 
+    const tasks: Task[] = [];
+
+    projects.forEach(project => {
+        tasks.push({
+            id: project._id ?? '',
+            name: project.title,
+            start: new Date(Number(project.interval.startDate)),
+            end: new Date(Number(project.interval.endDate)),
+            progress: 0, // progress is the difference between start and end date in days
+            dependencies: project.wps.map(wps => wps.title),
+            type: 'project',
+            styles: {
+                backgroundColor: '#3182ce',
+                backgroundSelectedColor: '#2c5282',
+            }
+        });
+    });
+
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
             <div className="flex justify-between mb-4">
@@ -73,6 +92,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                     <ProjectCard key={project._id} project={project} />
                 ))}
             </div>
+            {tasks.length > 0 && <GanttChart tasks={tasks} />}
         </div>
     );
 }

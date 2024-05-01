@@ -10,7 +10,6 @@ const pages = ['Projects', 'Contracts', 'Timesheets', 'People', 'Link'];
 function Header() {
   const { user, googleSignIn, logOut, photoUrl, loading, isAdmin } = UserAuth();
 
-
   return (
     <nav
     className="flex-no-wrap relative flex w-full items-center justify-between py-2 shadow-md dark:bg-neutral-600 bg-gray-600 lg:flex-wrap lg:justify-start lg:py-4">
