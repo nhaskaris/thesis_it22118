@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 import TimesheetCard from '@/components/Cards/TimesheetCard';
 import SearchBar from '@/components/SearchBar';
+import { ExportTimesheet } from '@/components/ExportTimesheet';
 
 async function getData() {
     const userCookies = cookies().get('token')
@@ -95,17 +96,17 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
-            <div className="flex justify-between mb-4">
-                <div></div>
+            <div className="flex justify-between mb-4 items-center">
+                <ExportTimesheet data={data.timesheets} filename='timesheets.csv'/>
                 <Link
-                href={{
-                    pathname: "/timesheets/createTimesheet",
-                    query: {
-                        data: JSON.stringify(data.contracts),
-                        holidays: JSON.stringify(holidays)
-                    }
-                }}
-                className="mr-8 py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    href={{
+                        pathname: "/timesheets/createTimesheet",
+                        query: {
+                            data: JSON.stringify(data.contracts),
+                            holidays: JSON.stringify(holidays)
+                        }
+                    }}
+                    className="py-2 px-4 mr-8 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     Create Timesheet
                 </Link>
