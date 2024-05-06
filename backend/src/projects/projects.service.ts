@@ -17,6 +17,15 @@ export class ProjectsService {
   async create(createProjectDto: CreateProjectDto) {
     const ids = [];
     for (const wp of createProjectDto.wps) {
+      for (const interval of wp.activeIntervals) {
+        if (!this.wpsService.isIntervalValid(interval)) {
+          throw new HttpException(
+            'Interval is invalid',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+
       try {
         const newWp = await this.wpsService.create(wp);
         ids.push(newWp);
@@ -75,6 +84,15 @@ export class ProjectsService {
     if (updateProjectDto.wps && updateProjectDto.wps.length > 0) {
       const ids = [];
       for (const wp of updateProjectDto.wps) {
+        for (const interval of wp.activeIntervals) {
+          if (!this.wpsService.isIntervalValid(interval)) {
+            throw new HttpException(
+              'Interval is invalid',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+        }
+
         try {
           const newWp = await this.wpsService.create(wp);
           ids.push(newWp);

@@ -4,15 +4,11 @@ import { UpdateContractDto } from './dto/update-contract.dto';
 import { Contract } from './schemas/contracts.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ProjectsService } from 'src/projects/projects.service';
-import { WpsService } from 'src/wps/wps.service';
 
 @Injectable()
 export class ContractsService {
   constructor(
     @InjectModel('Contract') private contractModel: Model<Contract>,
-    private readonly projectsService: ProjectsService,
-    private readonly wpsService: WpsService,
   ) {}
 
   async create(createContractDto: CreateContractDto) {

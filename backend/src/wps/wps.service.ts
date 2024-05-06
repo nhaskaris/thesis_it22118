@@ -4,6 +4,7 @@ import { UpdateWpDto } from './dto/update-wp.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Wp } from './schemas/wps.schema';
+import { Interval } from 'src/types/interval';
 
 @Injectable()
 export class WpsService {
@@ -22,7 +23,7 @@ export class WpsService {
     return this.wpModel.findById(id).exec();
   }
 
-  findOneByTitle(title: string): Promise<any> {
+  findOneByTitle(title: string) {
     return this.wpModel
       .findOne({
         title: title,
@@ -51,12 +52,9 @@ export class WpsService {
     const newIntervals = updateWpDto.newActiveIntervals;
     oldWp.activeIntervals = [];
     for (const newInterval of newIntervals) {
-      //check if new interval is valid
-      if (newInterval.startDate > newInterval.endDate) {
-        throw new Error('Start date must be before end date');
+      if (this.isIntervalValid(newInterval)) {
+        oldWp.activeIntervals.push(newInterval);
       }
-
-      oldWp.activeIntervals.push(newInterval);
     }
 
     //update wp
@@ -65,5 +63,34 @@ export class WpsService {
 
   async remove(id: string) {
     return await this.wpModel.findByIdAndDelete(id).exec();
+  }
+
+  isIntervalValid(interval: Interval): boolean {
+    if (interval.startDate.length != 3 || interval.endDate.length != 3) {
+      return false;
+    }
+
+    if (interval.startDate[0] != 'M' || interval.endDate[0] != 'M') {
+      return false;
+    }
+
+    if (
+      isNaN(Number(interval.startDate[1])) ||
+      isNaN(Number(interval.startDate[2])) ||
+      isNaN(Number(interval.endDate[1])) ||
+      isNaN(Number(interval.endDate[2]))
+    ) {
+      return false;
+    }
+
+    if (
+      Number(interval.startDate[2]) > Number(interval.endDate[2]) ||
+      (Number(interval.startDate[2]) == Number(interval.endDate[2]) &&
+        Number(interval.startDate[1]) > Number(interval.endDate[1]))
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }
