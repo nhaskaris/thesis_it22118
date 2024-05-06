@@ -12,7 +12,12 @@ export class Timesheet {
     raw: [
       {
         timestamp: { type: String },
-        hoursWorked: { type: Number },
+        workPackages: [
+          {
+            wp: { type: mongoose.Schema.Types.ObjectId, ref: 'Wp' },
+            hours: { type: Number },
+          },
+        ],
         _id: false,
       },
     ],

@@ -1,12 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { generateCalendar } from '@/tools/utils';
-import { AlertInfo, Contract, Day, Holiday } from "@/types/pages";
+import { AlertInfo, Contract, Day, Holiday, Wp } from "@/types/pages";
 import AddHoursPopup from '@/components/TimesheetRelated/TimesheetPopUp';
 import Alert from '@/components/Alert';
 
 
 export default function TimesheetCreation({ selectedContract, holidays, days, timesheet_id }: { selectedContract: Contract, holidays: Holiday[], days?: Day[], timesheet_id?: string}) {
-    const activeWps = [];
+    const activeWps: Wp[] = [];
     const unixDate = new Date().getTime();
 
     for(const wp of selectedContract.wps) {
@@ -18,18 +18,25 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
         }
     }
 
-    const hoursdata:{ [key: number]: number } = {};
+    const hoursdata: { [key: string]: { [key: string]: number } } = {};
 
-    if(days) {
-        for(const day of days) {
-            hoursdata[Number(day.date)] = day.hoursWorked;
+    // Example of how to update hoursdata with wp ID and hours for each date
+    if (days) {
+        for (const day of days) {
+            const dateKey = day.date.toString(); // Convert date to string to use as key
+            hoursdata[dateKey] = {}; // Initialize object for the date key
+
+            // Populate hoursdata with wp ID and hours for each work package
+            for (const wp of day.workPackages) {
+                hoursdata[dateKey][wp.wp._id!] = wp.hours; // Set wp ID as key and hours as value
+            }
         }
     }
 
     const currentDate = new Date();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isAddHoursPopupOpen, setIsAddHoursPopupOpen] = useState(false);
-    const [hoursData, setHoursData] = useState<{ [key: number]: number }>(hoursdata);
+    const [hoursData, setHoursData] = useState<{ [key: string]: { [key: string]: number } }>(hoursdata);
     const [allowWeekendClick, setAllowWeekendClick] = useState(false);
     const calendar = generateCalendar(currentDate.getFullYear(), currentDate.getMonth(), holidays);
     const [alert, setAlert] = useState<AlertInfo | null>(null);
@@ -51,7 +58,7 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
         setSelectedDate(null);
     };
 
-    const handleHoursDataChange = (newHoursData: { [key: number]: number }) => {
+    const handleHoursDataChange = (newHoursData: { [key: string]: { [key: string]: number } }) => {
         setHoursData(prevHoursData => ({
             ...prevHoursData,
             ...newHoursData
@@ -67,10 +74,17 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
             return;
         }
 
-        const daysData = Object.entries(hoursData).map(([date, hours]) => ({
-            date: date,
-            hoursWorked: hours
-        }));
+        const daysData = Object.keys(hoursData).map(date => {
+            return {
+                date: date,
+                workPackages: Object.keys(hoursData[date]).map(wpId => {
+                    return {
+                        wp: activeWps.find(wp => wp._id === wpId)!,
+                        hours: hoursData[date][wpId]
+                    };
+                })
+            };
+        });
 
         const timesheet = {
             days: daysData,
@@ -97,7 +111,9 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
 
     // Calculate total hours for the month
     const totalHoursForMonth = useMemo(() => {
-        return Object.values(hoursData).reduce((acc, curr) => acc + curr, 0);
+        return Object.values(hoursData).reduce((totalHours, dayHours) => {
+            return totalHours + Object.values(dayHours).reduce((totalHours, wpHours) => totalHours + wpHours, 0);
+        }, 0);
     }, [hoursData]);
 
     return (
@@ -135,7 +151,7 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
                             </td>
                             <td className={`border border-gray-300 px-4 py-2`} style={!allowWeekendClick && (day.isWeekend || holidays.some(holiday => new Date(holiday.dateIso).toDateString() === day.date.toDateString())) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>{day.isWeekend ? 'Yes' : 'No'}</td>
                             <td className={`border border-gray-300 px-4 py-2`} style={!allowWeekendClick && (day.isWeekend || holidays.some(holiday => new Date(holiday.dateIso).toDateString() === day.date.toDateString())) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>{day.isHoliday ? 'Yes' : 'No'}</td>
-                            <td className="border border-gray-300 px-4 py-2 text-white">{hoursData[Math.floor(day.date.getTime() / 1000)] || 0}</td>
+                            <td className="border border-gray-300 px-4 py-2 text-white">{!hoursData[Math.floor(day.date.getTime() / 1000)] ? 0 : Object.values(hoursData[Math.floor(day.date.getTime() / 1000)]).reduce((total, hours) => total + hours, 0)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -144,10 +160,11 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
             {totalHoursForMonth > 143 && <p className="text-red-500">Warning: Total hours for the month exceed 143 hours.</p>}
             <div className="flex justify-end mt-4">
                 <button type='button' className="bg-red-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleCancel}>Cancel</button>
-                <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Edit</button>
+                {!timesheet_id && <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Create</button>}
+                {timesheet_id && <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Edit</button>}
             </div>
             {isAddHoursPopupOpen && (
-                <AddHoursPopup selectedDate={selectedDate!} onClose={handleClosePopup} wps={activeWps} onHoursDataChange={handleHoursDataChange}/>
+                <AddHoursPopup selectedDate={selectedDate!} onClose={handleClosePopup} wps={activeWps} onHoursDataChange={handleHoursDataChange} oldData={hoursData[Math.floor(selectedDate!.getTime() / 1000)]}/>
             )}
             {alert && <Alert message={alert.message} severity={alert.severity} visible={alert.visible} onClose={alert.onClose}/>}
         </div>

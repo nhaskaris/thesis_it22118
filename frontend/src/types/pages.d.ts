@@ -71,9 +71,15 @@ export interface Timesheet {
 }
 
 export interface Day {
-    hoursWorked: number;
     date: string;
-}
+    workPackages: WorkPackage[];
+  }
+  
+  interface WorkPackage {
+    wp: Wp;
+    hours: number;
+  }
+  
 
 export interface Holiday {
     dateIso: string;

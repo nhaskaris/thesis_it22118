@@ -1,4 +1,11 @@
+import { Wp } from 'src/wps/schemas/wps.schema';
+
 export interface Day {
   date: string;
-  hoursWorked: number;
+  workPackages: WorkPackage[];
+}
+
+interface WorkPackage {
+  wp: Wp;
+  hours: number;
 }

@@ -47,6 +47,12 @@ export class TimesheetsService {
           path: 'human',
         },
       })
+      .populate({
+        path: 'days',
+        populate: {
+          path: 'workPackages.wp',
+        },
+      })
       .exec();
   }
 
@@ -79,13 +85,21 @@ export class TimesheetsService {
       })
       .exec();
 
-    let totalHours = timesheets.reduce(
-      (acc, timesheet) =>
-        acc + timesheet.days.reduce((acc, day) => acc + day.hoursWorked, 0),
-      0,
-    );
+    let totalHours = 0;
+    for (const timesheet of timesheets) {
+      for (const day of timesheet.days) {
+        totalHours += day.workPackages.reduce((acc, wp) => {
+          return acc + wp.hours;
+        }, 0);
+      }
+    }
 
-    const newTotalHours = days.reduce((acc, day) => acc + day.hoursWorked, 0);
+    let newTotalHours = 0;
+    for (const day of days) {
+      newTotalHours += day.workPackages.reduce((acc, wp) => {
+        return acc + wp.hours;
+      }, 0);
+    }
 
     totalHours += newTotalHours;
 
@@ -116,20 +130,28 @@ export class TimesheetsService {
     const totalDailyHours: { [key: string]: number } = {};
     for (const t of sameMonthTimesheets) {
       for (const day of t.days) {
+        let totalHours = 0;
+        for (const wp of day.workPackages) {
+          totalHours += wp.hours;
+        }
         if (totalDailyHours[day.date]) {
-          totalDailyHours[day.date] += day.hoursWorked;
+          totalDailyHours[day.date] += totalHours;
         } else {
-          totalDailyHours[day.date] = day.hoursWorked;
+          totalDailyHours[day.date] = totalHours;
         }
       }
     }
 
     //add the new timesheet to the totalDailyHours
     for (const day of timesheet.days) {
+      let totalHours = 0;
+      for (const wp of day.workPackages) {
+        totalHours += wp.hours;
+      }
       if (totalDailyHours[day.date]) {
-        totalDailyHours[day.date] += day.hoursWorked;
+        totalDailyHours[day.date] += totalHours;
       } else {
-        totalDailyHours[day.date] = day.hoursWorked;
+        totalDailyHours[day.date] = totalHours;
       }
     }
 

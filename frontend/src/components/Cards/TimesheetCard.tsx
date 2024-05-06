@@ -8,7 +8,13 @@ const TimesheetCard: React.FC<{ timesheet: Timesheet, holidays: Holiday[]}> = ({
         return new Date(parseInt(timestamp)).toLocaleDateString();
     };
 
-    const totalHours = timesheet.days.reduce((acc, day) => acc + day.hoursWorked, 0);
+    let totalHours = 0;
+
+    timesheet.days.forEach((day) => {
+        day.workPackages.forEach((wp) => {
+            totalHours += wp.hours;
+        });
+    });
 
     return (
         <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">

@@ -36,7 +36,9 @@ export const ExportTimesheet = ({ data, filename }: { data: Timesheet[], filenam
         const csvData = filteredData.map((timesheet) => {
             let totalHours = 0
             timesheet.days.forEach((day) => {
-                totalHours += day.hoursWorked;
+                day.workPackages.forEach((wp) => {
+                    totalHours += wp.hours;
+                });
             });
 
             return {

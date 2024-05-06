@@ -97,7 +97,8 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
     return (
         <div className="container mt-8 mx-auto py-8 border border-gray-300 rounded-md shadow-md">
             <div className="flex justify-between mb-4 items-center">
-                <ExportTimesheet data={data.timesheets} filename='timesheets.csv'/>
+                {filteredTimesheets.length > 0 && <ExportTimesheet data={data.timesheets} filename='timesheets.csv'/>}
+                {filteredTimesheets.length === 0 && <div></div>}
                 <Link
                     href={{
                         pathname: "/timesheets/createTimesheet",

@@ -1,36 +1,45 @@
 import React, { useState } from 'react';
-import { AlertInfo, Wp } from '@/types/pages';
+import { AlertInfo, WorkPackage, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
 
-export default function AddHoursPopup({ selectedDate, onClose, wps, onHoursDataChange }: { selectedDate: Date, onClose: () => void, wps: Wp[], onHoursDataChange: (newHoursData: { [key: number]: number }) => void }) {
-    const [hoursData, setHoursData] = useState<{ [key: string]: number }>({});
+export default function AddHoursPopup({ selectedDate, onClose, wps, onHoursDataChange, oldData }: { selectedDate: Date, onClose: () => void, wps: Wp[], onHoursDataChange: (newHoursData: { [key: string]: { [key: string]: number } }) => void,  oldData?: { [key: string]: number } }) {
+    const selectedDateUnix = Math.floor(selectedDate.getTime() / 1000).toString();
+
+    
+
+    const [hoursData, setHoursData] = useState<{ [key: string]: { [key: string]: number } }>({
+        [selectedDateUnix]: oldData || {}
+    });
     const [alert, setAlert] = useState<AlertInfo | null>(null);
 
     const handleInputChange = (workPackageId: string, e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        setHoursData(prevData => ({
-            ...prevData,
-            [workPackageId]: parseInt(value, 10) || 0
-        }));
+        
+        setHoursData(prevState => {
+            const newHoursData = { ...prevState };
+            const selectedDateUnix = Math.floor(selectedDate.getTime() / 1000);
+            if (!newHoursData[selectedDateUnix]) {
+                newHoursData[selectedDateUnix] = {};
+            }
+            newHoursData[selectedDateUnix][workPackageId] = Number(value);
+            return newHoursData;
+        });
     };
 
     const calculateTotalHours = () => {
-        let totalHours = 0;
-        for (const key in hoursData) {
-            totalHours += hoursData[key];
-        }
-        return totalHours;
+        return Object.values(hoursData).reduce((acc, hours) => acc + Object.values(hours).reduce((acc, value) => acc + value, 0), 0);
     };
+
 
     const handleSave = () => {
         const totalHours = calculateTotalHours();
+
         if (totalHours > 8) {
             setAlert({ message: 'Total hours cannot exceed 8', severity: 'error', visible: true, onClose: () => setAlert(null) });
             return;
         }
-        const selectedDateUnix = Math.floor(selectedDate.getTime() / 1000);
-        const newHoursData = { [selectedDateUnix]: totalHours }; 
-        onHoursDataChange(newHoursData); 
+        const newHoursData = { ...hoursData};
+        onHoursDataChange(newHoursData);
         onClose();
     };
 
@@ -45,7 +54,7 @@ export default function AddHoursPopup({ selectedDate, onClose, wps, onHoursDataC
                             type="number" 
                             id={`hours-${wp._id}`} 
                             name={`hours-${wp._id}`} 
-                            value={hoursData[wp._id!] || ''}
+                            value={hoursData[selectedDateUnix][wp._id!] || ''}
                             onChange={(e) => handleInputChange(wp._id!, e)} 
                             className={`mt-1 block w-full rounded-md text-black border shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50`}
                         />
