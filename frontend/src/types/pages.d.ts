@@ -9,7 +9,7 @@ export interface Project {
 
 export interface Interval {
     startDate: string;
-    endDate: string;
+    duration: number;
 }
 
 export interface Wp {
@@ -57,7 +57,7 @@ export interface Contract {
     project: Project;
     human: Human;
     wps: Wp[];
-    duration: Interval;
+    interval: Interval;
     hourlyRate: number;
     totalCost: number;
     _id?: string;

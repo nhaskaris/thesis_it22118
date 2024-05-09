@@ -15,7 +15,7 @@ export class Wp {
     raw([
       {
         startDate: { type: String },
-        endDate: { type: String },
+        duration: { type: Number },
         _id: false,
       },
     ]),

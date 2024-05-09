@@ -60,11 +60,14 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
     const tasks: Task[] = [];
 
     projects.forEach(project => {
+        // from project.interval.duration calculate the end date
+        const endDate = new Date(Number(project.interval.startDate));
+        endDate.setMonth(endDate.getMonth() + project.interval.duration);
         tasks.push({
             id: project._id ?? '',
             name: project.title,
             start: new Date(Number(project.interval.startDate)),
-            end: new Date(Number(project.interval.endDate)),
+            end: endDate,
             progress: 0, // progress is the difference between start and end date in days
             dependencies: project.wps.map(wps => wps.title),
             type: 'project',

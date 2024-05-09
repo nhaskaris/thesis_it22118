@@ -3,8 +3,7 @@ import { useState } from 'react';
 
 import { Contract, Holiday } from "@/types/pages";
 import TimesheetCalendar from '@/components/TimesheetRelated/TimesheetCalendar';
-
-
+import { isObjectActive } from '@/Utils/formatTimestamp';
 
 export default function Home({searchParams}: {searchParams: {data: string, holidays: string}}) {
     //call the api to get the holidays
@@ -13,7 +12,7 @@ export default function Home({searchParams}: {searchParams: {data: string, holid
 
     const holidays: Holiday[] = JSON.parse(searchParams.holidays);
 
-    const activeContracts = contracts.filter((contract) => Number(contract.duration.endDate) > new Date().getTime());
+    const activeContracts = contracts.filter((contract) => isObjectActive(contract.interval));
 
     const [selectedContract, setSelectedContract] = useState<Contract>();
 

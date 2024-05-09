@@ -2,17 +2,16 @@ import React from "react";
 import { DeleteButton } from "../DeleteButton"; // Assuming DeleteButton is already defined
 import { Contract } from "@/types/pages";
 import { EditButton } from "../EditButton";
+import { formatUnixTimestamp, formatUnixTimestampDuration } from "@/Utils/formatTimestamp";
 
 const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
-  const formatUnixTimestamp = (timestamp: string): string => {
-    return new Date(parseInt(timestamp)).toLocaleDateString();
-  };
+    console.log(contract);
   return (
         <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
           <div className="px-6 py-4">
               <div className="flex items-center justify-between mb-4">
                   <div className="text-lg font-bold text-gray-400 ">Contract Entry</div>
-                  <div className="text-sm text-gray-200">{formatUnixTimestamp(contract.duration.startDate)} - {formatUnixTimestamp(contract.duration.endDate)}</div>
+                  <div className="text-sm text-gray-200">{formatUnixTimestamp(contract.interval.startDate)} - {formatUnixTimestampDuration(contract.interval.startDate, contract.interval.duration)}</div>
               </div>
               <div className="flex items-center mb-2">
                   <div className="text-sm font-medium text-gray-400 mr-2">Title:</div>

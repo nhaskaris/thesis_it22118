@@ -45,11 +45,19 @@ export class WpsService {
 
     oldWp.isNew = false;
 
-    if (updateWpDto.title == oldWp.title) {
-      throw new Error(`Title ${updateWpDto} already exists`);
+    if (
+      updateWpDto.title == oldWp.title &&
+      updateWpDto._id != oldWp._id.toString()
+    ) {
+      throw new Error(`Title ${updateWpDto.title} already exists`);
     }
 
-    const newIntervals = updateWpDto.newActiveIntervals;
+    const newIntervals = updateWpDto.activeIntervals;
+
+    if (!newIntervals) {
+      throw new Error('No intervals provided');
+    }
+
     oldWp.activeIntervals = [];
     for (const newInterval of newIntervals) {
       if (this.isIntervalValid(newInterval)) {
@@ -66,27 +74,17 @@ export class WpsService {
   }
 
   isIntervalValid(interval: Interval): boolean {
-    if (interval.startDate.length != 3 || interval.endDate.length != 3) {
+    if (interval.startDate.length != 3) {
       return false;
     }
 
-    if (interval.startDate[0] != 'M' || interval.endDate[0] != 'M') {
+    if (interval.startDate[0] != 'M') {
       return false;
     }
 
     if (
       isNaN(Number(interval.startDate[1])) ||
-      isNaN(Number(interval.startDate[2])) ||
-      isNaN(Number(interval.endDate[1])) ||
-      isNaN(Number(interval.endDate[2]))
-    ) {
-      return false;
-    }
-
-    if (
-      Number(interval.startDate[2]) > Number(interval.endDate[2]) ||
-      (Number(interval.startDate[2]) == Number(interval.endDate[2]) &&
-        Number(interval.startDate[1]) > Number(interval.endDate[1]))
+      isNaN(Number(interval.startDate[2]))
     ) {
       return false;
     }

@@ -21,11 +21,11 @@ export class Contract {
   @Prop(
     raw({
       startDate: { type: String },
-      endDate: { type: String },
+      duration: { type: Number },
       _id: false,
     }),
   )
-  duration: Interval;
+  interval: Interval;
 
   @Prop()
   hourlyRate: number;

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
@@ -10,15 +10,20 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
     const contract: Contract = JSON.parse(searchParams.data);
 
     const wpIds = contract.wps.map(wp => wp._id);
+
+    const workH = contract.totalCost / contract.hourlyRate;
+    const workM = Math.floor(workH / 143 * 10) / 10 + 1;
     
-    const dur = dayjs(Number(contract.duration.endDate)).diff(Number(contract.duration.startDate), 'month') + 1;
-    const startDate = dayjs(Number(contract.duration.startDate)).format('YYYY-MM-DD');
+    const startDate = dayjs(Number(contract.interval.startDate)).format('YYYY-MM-DD');
     const [intervalStart, setIntervalStart] = useState(startDate);
-    const [duration, setDuration] = useState(dur);
+    const [duration, setDuration] = useState(contract.interval.duration);
     const [hourlyRate, setHourlyRate] = useState<number>(contract.hourlyRate);
     const [totalCost, setTotalCost] = useState<number>(contract.totalCost);
     const [selectedWorkPackages, setSelectedWorkPackages] = useState(wpIds);
     const [alert, setAlert] = useState<AlertInfo | null>(null);
+    const [workHours, setWorkHours] = useState<number>(workH);
+    const [workMonths, setWorkMonths] = useState<number>(workM);
+    
     
     const router = useRouter();
   
@@ -36,8 +41,13 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
         }
       }
   
-      if (hourlyRate! * 143* Number(duration) > totalCost!) {
-        setAlert({ message: `Hourly Rate ${hourlyRate} * ${duration} months exceeds total cost of contract ${totalCost}$`, severity: 'error', visible: true, onClose: () => setAlert(null)});
+      if (workMonths > Number(duration)) {
+        setAlert({ message: `Working months exceed duration of contract`, severity: 'error', visible: true, onClose: () => setAlert(null)});
+        return;
+      }
+  
+      if (selectedWorkPackages.length === 0) {
+        setAlert({ message: `Select at least one work package`, severity: 'error', visible: true, onClose: () => setAlert(null)});
         return;
       }
   
@@ -46,9 +56,9 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
         hourlyRate: hourlyRate!,
         totalCost: totalCost!,
         wps: wps,
-        duration: {
+        interval: {
           startDate: String(new Date(intervalStart).getTime()),
-          endDate: String(dayjs(intervalStart).add(Number(duration), 'month').toDate().getTime())
+          duration
         }
       }
   
@@ -79,6 +89,12 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
         }
       });
     };
+
+    useEffect(() => {
+      //calculate the work hours and work months
+      setWorkHours(Math.round(totalCost / hourlyRate));
+      setWorkMonths(Math.floor(workHours / 143 * 10) / 10 + 1);
+    }, [hourlyRate, totalCost, duration, workHours]);
   
     return (
       <div className="container mx-auto py-8 border border-gray-300 rounded-md shadow-md p-8 mt-2 bg-gray-800">
@@ -113,16 +129,6 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
                 />
               </div>
             </div>
-          
-          <div className="mb-4">
-            <label htmlFor="hourlyCost" className="block text-sm font-medium text-white">Hourly Rate:</label>
-            <input type="number" id="hourlyCost" value={hourlyRate} onChange={(e) => setHourlyRate(Number(e.target.value))} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900" />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="totalCost" className="block text-sm font-medium text-white">Total Cost:</label>
-            <input type="number" id="totalCost" value={totalCost} onChange={(e) => setTotalCost(Number(e.target.value))} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900" />
-          </div>
 
           <div className="mb-4">
             <label htmlFor="human" className="block text-sm font-medium text-white">Human:</label>
@@ -135,6 +141,16 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
           </div>
 
           <div className="mb-4">
+            <label htmlFor="hourlyCost" className="block text-sm font-medium text-white">Hourly Rate:</label>
+            <input type="number" id="hourlyCost" value={hourlyRate} onChange={(e) => setHourlyRate(Number(e.target.value))} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900" />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="totalCost" className="block text-sm font-medium text-white">Total Cost:</label>
+            <input type="number" id="totalCost" value={totalCost} onChange={(e) => setTotalCost(Number(e.target.value))} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900" />
+          </div>
+
+          <div className="mb-4">
               <label className="block text-sm font-medium text-white">Select Work Packages:</label>
               {contract.project.wps.map((wp: Wp, i) => (
                 <div key={i} className="flex items-center">
@@ -143,6 +159,20 @@ export default function Home({searchParams}: {searchParams: {data: string}}) {
                 </div>
               ))}
           </div>
+
+          {workHours > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-white">Total Work Hours:</label>
+              <span className="text-sm text-white">{workHours}</span>
+            </div>
+          )}
+
+          {workMonths > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-white">Total Work Months:</label>
+              <span className="text-sm text-white">{workMonths}</span>
+            </div>
+          )}
 
           <div className="mt-6 flex justify-between">
             <button type="button" onClick={() => router.push('/contracts')} className="w-1/2 px-4 py-2 bg-gray-300 text-white rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400">Cancel</button>

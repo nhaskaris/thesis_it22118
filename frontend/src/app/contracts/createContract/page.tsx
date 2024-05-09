@@ -5,10 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
+import { isObjectActive, isWpActive } from '@/Utils/formatTimestamp';
 
 export default function Home() {
   const [intervalStart, setIntervalStart] = useState('');
-  const [duration, setDuration] = useState('');
+  const [duration, setDuration] = useState(0);
   const [hourlyRate, setHourlyRate] = useState<number>(0);
   const [totalCost, setTotalCost] = useState<number>(0);
   const [selectedPerson, setSelectedPerson] = useState<Human>();
@@ -39,15 +40,20 @@ export default function Home() {
       return;
     }
 
+    if (selectedWorkPackages.length === 0) {
+      setAlert({ message: `Select at least one work package`, severity: 'error', visible: true, onClose: () => setAlert(null)});
+      return;
+    }
+
     const newContract: Contract = {
       hourlyRate: hourlyRate!,
       totalCost: totalCost!,
       human: selectedPerson!,
       project: selectedProject!,
       wps: wps,
-      duration: {
+      interval: {
         startDate: String(new Date(intervalStart).getTime()),
-        endDate: String(dayjs(intervalStart).add(Number(duration), 'month').toDate().getTime())
+        duration
       }
     }
 
@@ -98,7 +104,7 @@ export default function Home() {
       <select id="selectedProject" value={selectedProject ? selectedProject._id : ''} onChange={handleProjectChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-gray-900">
           <option value="">Select Project</option>
           {projects.map((project: Project) => (
-            Number(project.interval.endDate) > dayjs().unix() ? <option key={project._id} value={project._id}>{project.title}</option> : null
+            isObjectActive(project.interval) ? <option key={project._id} value={project._id}>{project.title}</option> : null
           ))}
       </select>
     )
@@ -137,22 +143,13 @@ export default function Home() {
     return <h2>🌀 Loading...</h2>;
   }
 
-  const isActive = (wp: Wp) => {
-    for (const interval of wp.activeIntervals) {
-      if (dayjs().unix() < Number(interval.endDate)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   useEffect(() => {
     if (selectedProject) {
       // Set the start date of the contract to the start date of the project interval
       setIntervalStart(dayjs(Number(selectedProject.interval.startDate)).format('YYYY-MM-DD'));
 
       // Set the default duration of the contract to the duration of the project interval
-      setDuration(String(dayjs(Number(selectedProject.interval.endDate)).diff(Number(selectedProject.interval.startDate), 'month')));
+      setDuration(selectedProject.interval.duration);
     }
   }, [selectedProject]);
 
@@ -203,7 +200,7 @@ export default function Home() {
                 id="intervalEnd"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={(e) => setDuration(Number(e.target.value))}
                 required
               />
             </div>
@@ -223,7 +220,7 @@ export default function Home() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-white">Select Work Packages:</label>
             {selectedProject.wps.map((wp: Wp) => (
-              isActive(wp) ? (
+              isWpActive(wp.activeIntervals, selectedProject.interval.startDate, selectedProject.interval.duration) ? (
                 <div key={wp._id} className="flex items-center">
                   <input type="checkbox" id={wp._id} checked={selectedWorkPackages.includes(wp._id!)} onChange={(e) => handleWorkPackageChange(e, wp._id!)} className="mr-2"/>
                   <label htmlFor={wp._id} className="text-sm text-white">{wp.title}</label>

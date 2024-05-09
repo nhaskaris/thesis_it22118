@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { Roles } from 'src/auth/auth.decorator';
 import { Role } from 'src/types/role.enum';
 
@@ -33,7 +32,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
+  update(@Param('id') id: string, @Body() updateProjectDto: CreateProjectDto) {
     return this.projectsService.update(id, updateProjectDto);
   }
 

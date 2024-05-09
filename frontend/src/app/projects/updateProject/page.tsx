@@ -1,28 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Project, Wp, Interval, AlertInfo } from '@/types/pages';
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
+import { isWpActive, isIntervalValid } from '@/Utils/formatTimestamp';
 
 export default function UpdateProjectPage({searchParams}: {searchParams: {data: string}}) {
-  const projects: Project = JSON.parse(searchParams.data);
+  const project: Project = JSON.parse(searchParams.data);
 
-  for (const wp of projects.wps) {
-    wp.activeIntervals.forEach(interval => {
-      interval.startDate = dayjs(Number(interval.startDate)).format('YYYY-MM-DD');
-      interval.endDate = dayjs(Number(interval.endDate)).format('YYYY-MM-DD');
-    });
-  }
-  const wps: Wp[] = projects.wps;
+  const wps: Wp[] = project.wps;
 
-  const [title, setTitle] = useState(projects.title);
-  const [description, setDescription] = useState(projects.description);
+  const [title, setTitle] = useState(project.title);
+  const [description, setDescription] = useState(project.description);
   const [workPackages, setWorkPackages] = useState<Wp[]>(wps);
-  const [intervalStart, setIntervalStart] = useState(dayjs(Number(projects.interval.startDate)).format('YYYY-MM-DD'));
-  const [intervalEnd, setIntervalEnd] = useState(dayjs(Number(projects.interval.endDate)).format('YYYY-MM-DD'));
-  const [id, setId] = useState(projects.id);
+  const [intervalStart, setIntervalStart] = useState(dayjs(Number(project.interval.startDate)).format('YYYY-MM-DD'));
+  const [duration, setDuration] = useState(project.interval.duration);
   const router = useRouter()
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,53 +45,47 @@ export default function UpdateProjectPage({searchParams}: {searchParams: {data: 
 
   const handleIntervalChange = (wpIndex: number, intervalIndex: number, field: keyof Interval, value: string) => {
     const updatedWorkPackages = [...workPackages];
-    if (field === 'startDate') {
-      updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
-        ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
-        [field]: value
-      };
-    } else {
-      updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
-        ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
-        [field]: value
-      };
-    }
+    updatedWorkPackages[wpIndex].activeIntervals[intervalIndex] = {
+      ...updatedWorkPackages[wpIndex].activeIntervals[intervalIndex],
+      [field]: value
+    };
     setWorkPackages(updatedWorkPackages);
   };
 
   const parseDateToTimestamp = (dateString: string) => {
+    if (dateString.length == 0) {
+      return 0;
+    }
+
     return new Date(dateString).getTime()
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-  
+
     const newProject: Project = {
-      id,
+      id: project.id,
       title,
       description,
       wps: structuredClone(workPackages),
-      interval: { startDate: intervalStart, endDate: intervalEnd },
+      interval: { startDate: intervalStart, duration },
     };
 
-    for (const wp of newProject.wps) {
-      for (const interval of wp.activeIntervals) {
-        const startDate = parseDateToTimestamp(interval.startDate);
-        const endDate = parseDateToTimestamp(interval.endDate);
+    const startDate = parseDateToTimestamp(newProject.interval.startDate);
 
-        if (startDate && endDate) {
-          interval.startDate = String(startDate);
-          interval.endDate = String(endDate);
+    newProject.interval.startDate = String(startDate);
+
+    for (const wp of newProject.wps) {
+      for (const interval of wp.activeIntervals) {      
+        if (!isIntervalValid(interval)) {
+          return showAlert('Invalid interval format', 'error');
+        }
+        
+        if (!isWpActive(interval, newProject.interval.startDate, newProject.interval.duration)) {
+          return showAlert('Work package interval should be active during project interval', 'error');
         }
       }
     }
-
-    const startDate = parseDateToTimestamp(newProject.interval.startDate);
-    const endDate = parseDateToTimestamp(newProject.interval.endDate);
-
-    newProject.interval.startDate = String(startDate);
-    newProject.interval.endDate = String(endDate);
-
     const res = await fetch('/api', { 
         method: 'PATCH', 
         body: JSON.stringify({"project": newProject}), 
@@ -160,42 +148,41 @@ export default function UpdateProjectPage({searchParams}: {searchParams: {data: 
             <div className="mb-2 ml-4">
               <label className="block text-sm font-medium text-white-700 mb-1">Start Date 1</label>
               <input
-                type="date"
+                type="text"
                 value={wp.activeIntervals[0] ? wp.activeIntervals[0].startDate : ''}
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'startDate', e.target.value)}
                 className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                 required
-                min={wp.activeIntervals[0] ? wp.activeIntervals[0].startDate : ''}
+                placeholder='MXX'
               />
-              <label className="block text-sm font-medium text-white-700 mb-1">End Date 1</label>
+              <label className="block text-sm font-medium text-white-700 mb-1">Duration 1</label>
               <input
-                type="date"
-                value={wp.activeIntervals[0] ? wp.activeIntervals[0].endDate : ''}
-                onChange={(e) => handleIntervalChange(wpIndex, 0, 'endDate', e.target.value)}
+                type="number"
+                value={wp.activeIntervals[0] ? wp.activeIntervals[0].duration : 0}
+                onChange={(e) => handleIntervalChange(wpIndex, 0, 'duration', e.target.value)}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                 required
-                min={wp.activeIntervals[0] ? wp.activeIntervals[0].endDate : ''}
+                min={wp.activeIntervals[0] ? wp.activeIntervals[0].duration : 0}
               />
             </div>
             {wp.activeIntervals.slice(1).map((interval, intervalIndex) => (
               <div key={intervalIndex + 1} className="mb-2 ml-4">
                 <label className="block text-sm font-medium text-white-700 mb-1">Start Date {intervalIndex + 2}</label>
                 <input
-                  type="date"
+                  type="text"
                   value={interval.startDate}
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'startDate', e.target.value)}
                   className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                   required
-                  min={interval.startDate}
+                  placeholder='MXX'
                 />
                 <label className="block text-sm font-medium text-white-700 mb-1">Duration {intervalIndex + 2}</label>
                 <input
-                  type="date"
-                  value={interval.endDate}
-                  onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'endDate', e.target.value)}
+                  type="number"
+                  value={interval.duration}
+                  onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'duration', e.target.value)}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                   required
-                  min={interval.endDate}
                 />
               </div>
             ))}
@@ -218,16 +205,15 @@ export default function UpdateProjectPage({searchParams}: {searchParams: {data: 
           </div>
           <div>
             <label htmlFor="intervalEnd" className="block text-sm font-medium text-white-700">
-              End Date of Project
+              Duration of Project (in months)
             </label>
             <input
-              type="date"
+              type="number"
               id="intervalEnd"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
-              value={intervalEnd}
-              onChange={(e) => setIntervalEnd(e.target.value)}
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
               required
-              min={intervalEnd}
             />
           </div>
         </div>

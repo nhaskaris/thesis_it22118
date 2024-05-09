@@ -57,10 +57,7 @@ export class ProjectsService {
     return this.projectModel.findOne({ id: id }).exec();
   }
 
-  async update(
-    id: string,
-    updateProjectDto: UpdateProjectDto | CreateProjectDto,
-  ) {
+  async update(id: string, updateProjectDto: UpdateProjectDto) {
     const oldProject = await this.findOneById(id);
 
     if (!oldProject) {
@@ -84,21 +81,32 @@ export class ProjectsService {
     if (updateProjectDto.wps && updateProjectDto.wps.length > 0) {
       const ids = [];
       for (const wp of updateProjectDto.wps) {
+        if (!wp.activeIntervals) {
+          throw new HttpException(
+            'No intervals provided',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        if (!wp.title) {
+          throw new HttpException('No title provided', HttpStatus.BAD_REQUEST);
+        }
+
         for (const interval of wp.activeIntervals) {
           if (!this.wpsService.isIntervalValid(interval)) {
             throw new HttpException(
-              'Interval is invalid',
+              'Interval format is invalid',
               HttpStatus.BAD_REQUEST,
             );
           }
         }
 
         try {
-          const newWp = await this.wpsService.create(wp);
+          const newWp = await this.wpsService.update(wp.title, wp);
           ids.push(newWp);
         } catch (error) {
           throw new HttpException(
-            `Work Package with ${updateProjectDto.title} title already exists`,
+            `Work Package with ${wp.title} title already exists`,
             HttpStatus.CONFLICT,
           );
         }

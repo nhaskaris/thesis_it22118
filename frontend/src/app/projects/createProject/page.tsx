@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { Project, Wp, Interval, AlertInfo } from '@/types/pages';
 import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert';
-import dayjs from 'dayjs';
+import { isWpActive, isIntervalValid } from '@/Utils/formatTimestamp';
 
 export default function Home() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [workPackages, setWorkPackages] = useState<Wp[]>([{ title: '', activeIntervals: [] }]);
   const [intervalStart, setIntervalStart] = useState('');
-  const [duration, setDuration] = useState('');
+  const [duration, setDuration] = useState(0);
   const [id, setID] = useState('');
   const router = useRouter()
 
@@ -51,9 +51,9 @@ export default function Home() {
 
   const handleAddInterval = (index: number) => {
     const updatedWorkPackages = [...workPackages];
-    updatedWorkPackages[index].activeIntervals.push({ startDate: '', endDate: '' });
+    updatedWorkPackages[index].activeIntervals.push({ startDate: '', duration: 0 });
     if(updatedWorkPackages[index].activeIntervals.length == 1) {
-      updatedWorkPackages[index].activeIntervals.push({ startDate: '', endDate: '' });
+      updatedWorkPackages[index].activeIntervals.push({ startDate: '', duration: 0 });
     }
     setWorkPackages(updatedWorkPackages);
   };
@@ -76,6 +76,10 @@ export default function Home() {
   };
 
   const parseDateToTimestamp = (dateString: string) => {
+    if (dateString.length == 0) {
+      return 0;
+    }
+    
     return new Date(dateString).getTime()
   }
 
@@ -87,7 +91,7 @@ export default function Home() {
       title,
       description,
       wps: structuredClone(workPackages),
-      interval: { startDate: intervalStart, endDate: '' },
+      interval: { startDate: intervalStart, duration },
     };
 
     //each workpackage should have unique title
@@ -99,22 +103,23 @@ export default function Home() {
       workPackageTitles.add(wp.title);
     }
 
-    for (const wp of newProject.wps) {
-      for (const interval of wp.activeIntervals) {
-        const startDate = parseDateToTimestamp(interval.startDate);
-        const endDate = dayjs(startDate).add(Number(interval.endDate), 'month').toDate().getTime();
-        
-        interval.startDate = String(startDate);
-        interval.endDate = String(endDate);
-      }
-    }
-
     const startDate = parseDateToTimestamp(newProject.interval.startDate);
-    const endDate = dayjs(startDate).add(Number(duration), 'month').toDate().getTime();
 
     //convert to Unix time
     newProject.interval.startDate = String(startDate);
-    newProject.interval.endDate = String(endDate);
+
+    for (const wp of newProject.wps) {
+      for (const interval of wp.activeIntervals) {      
+        //startDate has format MXX. Get the month from the 2 digits after the M and add duration
+        if (!isIntervalValid(interval)) {
+          return showAlert('Invalid interval format', 'error');
+        }
+
+        if (!isWpActive(interval, newProject.interval.startDate, newProject.interval.duration)) {
+          return showAlert('Work package interval should be active during project interval', 'error');
+        }
+      }
+    }
 
     const res = await fetch('/api', { 
         method: 'POST', 
@@ -191,18 +196,18 @@ export default function Home() {
             <div className="mb-2 ml-4">
               <label className="block text-sm font-medium text-white-700 mb-1">Start Date 1</label>
               <input
-                type="date"
+                type="text"
                 value={wp.activeIntervals[0] ? wp.activeIntervals[0].startDate : ''}
                 onChange={(e) => handleIntervalChange(wpIndex, 0, 'startDate', e.target.value)}
                 className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                 required
-                min={new Date().toJSON().split('T')[0]}
+                placeholder='MXX'
               />
               <label className="block text-sm font-medium text-white-700 mb-1">Duration 1 (months)</label>
               <input
                 type="number"
-                value={wp.activeIntervals[0] ? wp.activeIntervals[0].endDate ?? '' : ''}
-                onChange={(e) => handleIntervalChange(wpIndex, 0, 'endDate', e.target.value)}
+                value={wp.activeIntervals[0] ? wp.activeIntervals[0].duration ?? 0 : 0}
+                onChange={(e) => handleIntervalChange(wpIndex, 0, 'duration', e.target.value)}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                 required
               />
@@ -211,18 +216,18 @@ export default function Home() {
               <div key={intervalIndex + 1} className="mb-2 ml-4">
                 <label className="block text-sm font-medium text-white-700 mb-1">Start Date {intervalIndex + 2}</label>
                 <input
-                  type="date"
+                  type="text"
                   value={interval.startDate}
                   onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'startDate', e.target.value)}
                   className="mr-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                   required
-                  min={new Date().toJSON().split('T')[0]}
+                  placeholder='MXX'
                 />
                 <label className="block text-sm font-medium text-white-700 mb-1">Duration {intervalIndex + 2}</label>
                 <input
                   type="number"
-                  value={interval.endDate}
-                  onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'endDate', e.target.value)}
+                  value={interval.duration}
+                  onChange={(e) => handleIntervalChange(wpIndex, intervalIndex + 1, 'duration', e.target.value)}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black bg-gray-200"
                   required
                 />
@@ -286,7 +291,7 @@ export default function Home() {
               id="intervalEnd"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-black"
               value={duration}
-              onChange={(e) => setDuration(e.target.value)}
+              onChange={(e) => setDuration(Number(e.target.value))}
               required
             />
           </div>

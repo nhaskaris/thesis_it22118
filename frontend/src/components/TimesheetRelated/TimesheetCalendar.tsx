@@ -3,18 +3,14 @@ import { generateCalendar } from '@/tools/utils';
 import { AlertInfo, Contract, Day, Holiday, Wp } from "@/types/pages";
 import AddHoursPopup from '@/components/TimesheetRelated/TimesheetPopUp';
 import Alert from '@/components/Alert';
-
+import { isWpActive } from '@/Utils/formatTimestamp';
 
 export default function TimesheetCreation({ selectedContract, holidays, days, timesheet_id }: { selectedContract: Contract, holidays: Holiday[], days?: Day[], timesheet_id?: string}) {
     const activeWps: Wp[] = [];
-    const unixDate = new Date().getTime();
 
     for(const wp of selectedContract.wps) {
-        for(const interval of wp.activeIntervals) {
-            if(Number(interval.endDate) >= unixDate) {
-                activeWps.push(wp);
-                break;
-            }
+        if (isWpActive(wp.activeIntervals, selectedContract.project.interval.startDate, selectedContract.project.interval.duration)) {
+            activeWps.push(wp);
         }
     }
 
@@ -161,7 +157,7 @@ export default function TimesheetCreation({ selectedContract, holidays, days, ti
             <div className="flex justify-end mt-4">
                 <button type='button' className="bg-red-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleCancel}>Cancel</button>
                 {!timesheet_id && <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Create</button>}
-                {timesheet_id && <button type='button' className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Edit</button>}
+                {timesheet_id && <button type='button' className="bg-orange-600 text-white px-4 py-2 rounded-md" onClick={handleCreateTimesheet}>Edit</button>}
             </div>
             {isAddHoursPopupOpen && (
                 <AddHoursPopup selectedDate={selectedDate!} onClose={handleClosePopup} wps={activeWps} onHoursDataChange={handleHoursDataChange} oldData={hoursData[Math.floor(selectedDate!.getTime() / 1000)]}/>
