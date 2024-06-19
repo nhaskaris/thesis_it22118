@@ -280,6 +280,7 @@ export default function Home() {
               onChange={(e) => setIntervalStart(e.target.value)}
               required
               min={new Date().toJSON().split('T')[0]}
+              placeholder="MM/DD/YYYY"
             />
           </div>
           <div>
