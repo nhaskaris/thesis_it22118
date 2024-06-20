@@ -114,6 +114,12 @@ export class TimesheetsService {
     const timesheets = await this.findAll();
 
     const sameHumanTimesheets = timesheets.filter((t) => {
+      if (!t.contract) return false;
+      if (!timesheet.contract) return false;
+
+      if (!t.contract.human) return false;
+      if (!timesheet.contract.human) return false;
+
       return t.contract.human.vat === timesheet.contract.human.vat;
     });
 

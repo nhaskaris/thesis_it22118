@@ -17,6 +17,12 @@ export class ProjectsService {
   async create(createProjectDto: CreateProjectDto) {
     const ids = [];
     for (const wp of createProjectDto.wps) {
+      if (!wp.activeIntervals) {
+        throw new HttpException(
+          'No intervals provided for the given Work Packages',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       for (const interval of wp.activeIntervals) {
         if (!this.wpsService.isIntervalValid(interval)) {
           throw new HttpException(
