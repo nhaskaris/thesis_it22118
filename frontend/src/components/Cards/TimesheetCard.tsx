@@ -2,10 +2,11 @@ import { Holiday, Timesheet } from '@/types/pages';
 import React from 'react';
 import { DeleteButton } from "../DeleteButton";
 import { EditButton } from '../EditButton';
+import dayjs from 'dayjs';
 
 const TimesheetCard: React.FC<{ timesheet: Timesheet, holidays: Holiday[]}> = ({ timesheet, holidays }) => {
     const formatUnixTimestamp = (timestamp: string): string => {
-        return new Date(parseInt(timestamp)).toLocaleDateString();
+        return dayjs(parseInt(timestamp)).format('MM/DD/YYYY');
     };
 
     let totalHours = 0;

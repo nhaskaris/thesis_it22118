@@ -1,35 +1,35 @@
 import { Interval } from "@/types/pages";
+import dayjs from "dayjs";
 
 export const formatUnixTimestamp = (timestamp: string): string => {
-    return new Date(parseInt(timestamp)).toLocaleDateString();
+    return dayjs(Number(timestamp)).format('MM/DD/YYYY');
 };
 
 //returns the date of the timestamp plus the duration in months in the format of MM/DD/YYYY
-export const formatUnixTimestampDuration = (timestamp: string, duration: number): string => {
-    const date = new Date(parseInt(timestamp));
-    date.setMonth(date.getMonth() + duration);
+export const formatUnixTimestampDuration = (timestamp: number, duration: number): string => {
+    const date = dayjs(timestamp).add(duration, 'month');
 
-    return date.toLocaleDateString();
+    return date.format('MM/DD/YYYY');
 }
 
 export const formatUnixTimestampWpInterval = (wp_timestamp: string, project_timestamp: string, duration?: number): string => {
     const wp_offset_months = parseInt(wp_timestamp.substring(1));
     const project_offset = parseInt(project_timestamp);
-    const date = new Date(project_offset);
+    let date = dayjs(project_offset);
 
-    date.setMonth(date.getMonth() + wp_offset_months);
+    date = date.add(wp_offset_months, 'month');
 
-    date.setDate(1);
-    
+    date = date.startOf('month');
+
     if (duration) {
-      date.setMonth(date.getMonth() + duration);
+      date = date.add(duration, 'month');
     }
 
-    if (wp_offset_months == 0) {
-      date.setDate(new Date(project_offset).getDate());
+    if (wp_offset_months === 0) {
+      date = date.date(dayjs(project_offset).date());
     }
 
-    return date.toLocaleDateString();
+    return date.format('MM/DD/YYYY');
 }
 
 export const isIntervalValid = (interval: Interval): boolean => {
@@ -65,10 +65,11 @@ export const isWpActive = (interval: Interval | Interval[], project_start_timest
 
   //project interval should be greater than or equal to work package interval
   const wp_timestamp_startDate = formatUnixTimestampWpInterval(interval.startDate, project_start_timestamp);
-  const wp_timestamp_endDate = formatUnixTimestampDuration(wp_timestamp_startDate, interval.duration)
+  const wp_timestamp_startDate_unix = Math.floor(new Date(wp_timestamp_startDate).getTime());
+  const wp_timestamp_endDate = formatUnixTimestampDuration(wp_timestamp_startDate_unix, interval.duration)
 
-  const project_startDate = new Date(Number(project_start_timestamp)).toLocaleDateString();
-  const project_endDate = formatUnixTimestampDuration(project_start_timestamp, project_duration);
+  const project_startDate = dayjs(Number(project_start_timestamp)).format('MM/DD/YYYY');
+  const project_endDate = formatUnixTimestampDuration(parseInt(project_start_timestamp), project_duration);
 
   if (new Date(wp_timestamp_startDate) >= new Date(project_startDate) && new Date(wp_timestamp_endDate) <= new Date(project_endDate)) {
     return true;
@@ -78,8 +79,8 @@ export const isWpActive = (interval: Interval | Interval[], project_start_timest
 }
 
 export const isObjectActive = (interval: Interval): boolean => {
-  const start_date = new Date(Number(interval.startDate)).toLocaleDateString();
-  const end_date = formatUnixTimestampDuration(interval.startDate, interval.duration);
+  const start_date = new Date(Number(interval.startDate)).toDateString();
+  const end_date = formatUnixTimestampDuration(Number(interval.startDate), interval.duration);
 
   if (new Date(start_date) <= new Date() && new Date(end_date) >= new Date()) {
     return true;

@@ -11,7 +11,7 @@ const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
           <div className="px-6 py-4">
               <div className="flex items-center justify-between mb-4">
                   <div className="text-lg font-bold text-gray-400 ">Contract Entry</div>
-                  <div className="text-sm text-gray-200">{formatUnixTimestamp(contract.interval.startDate)} - {formatUnixTimestampDuration(contract.interval.startDate, contract.interval.duration)}</div>
+                  <div className="text-sm text-gray-200">{formatUnixTimestamp(contract.interval.startDate)} - {formatUnixTimestampDuration(Number(contract.interval.startDate), contract.interval.duration)}</div>
               </div>
               <div className="flex items-center mb-2">
                   <div className="text-sm font-medium text-gray-400 mr-2">Title:</div>

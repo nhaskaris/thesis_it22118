@@ -44,7 +44,7 @@ export const ExportTimesheet = ({ data, filename }: { data: Timesheet[], filenam
             return {
                 'total_hours': String(totalHours),
                 'project_id': timesheet.contract.project.id,
-                'timestamp_created': new Date(Number(timesheet.timestamp_created)).toLocaleString(),
+                'timestamp_created': new Date(Number(timesheet.timestamp_created)).toDateString(),
             };
         });
 

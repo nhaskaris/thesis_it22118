@@ -10,7 +10,7 @@ const ProjectCard: React.FC<{ project: Project}> = ({ project }) => {
       <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
               <div className="text-lg font-bold text-gray-400 ">Project Entry</div>
-              <div className="text-sm text-gray-200">{formatUnixTimestamp(project.interval.startDate)} -{' '} {formatUnixTimestampDuration(project.interval.startDate, project.interval.duration)}</div>
+              <div className="text-sm text-gray-200">{formatUnixTimestamp(project.interval.startDate)} -{' '} {formatUnixTimestampDuration(Number(project.interval.startDate), project.interval.duration)}</div>
           </div>
           <div className="flex items-center mb-2">
               <div className="text-sm font-medium text-gray-400 mr-2">ID:</div>
