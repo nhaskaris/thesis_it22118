@@ -50,8 +50,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
     setIsLoggingOut(true);
 
-    router.push('/')
-    router.refresh();
+    window.location.href = '/';
   };
 
   useEffect(() => {
@@ -61,8 +60,9 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         destroyCookie(null, 'token');
 
-        router.push('/');
-        router.refresh();
+        if (pathname !== '/') {
+          window.location.href = '/';
+        }
       } else if(currentUser) {
         setUser(currentUser);
 
