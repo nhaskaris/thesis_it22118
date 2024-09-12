@@ -60,13 +60,13 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         destroyCookie(null, 'token');
 
-        if (pathname !== '/') {
-          window.location.href = '/';
-        }
+        window.location.href = '/';
       } else if(currentUser) {
         setUser(currentUser);
 
         let token = await currentUser?.getIdToken();
+
+        if (!token) return;
 
         const role = (await currentUser?.getIdTokenResult())?.claims.admin;
 
