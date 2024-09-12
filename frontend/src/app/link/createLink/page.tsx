@@ -48,7 +48,7 @@ const CreateLinkPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 border border-gray-300 rounded-md shadow-md p-8 mt-2 bg-gray-800">
-      <h1 className="text-3xl font-semibold mb-4">Create a New User</h1>
+      <h1 className="text-3xl font-semibold mb-4">Link with a User</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-white-700">
