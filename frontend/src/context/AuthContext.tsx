@@ -31,6 +31,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -44,8 +45,10 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
     }
   };
 
-  const logOut = () => {
-    signOut(auth);
+  const logOut = async () => {
+    await signOut(auth);
+
+    setIsLoggingOut(true);
 
     router.push('/')
   };
@@ -73,7 +76,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         setCookie(null, 'token', token);
 
-        if (pathname === '/') {
+        if (pathname === '/' && !isLoggingOut) {
           router.push('/projects');
         }
       }
