@@ -98,7 +98,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
       clearInterval(interval);
     };
     
-  }, [router, user, pathname]);
+  }, [router, user, pathname, isLoggingOut]);
 
   return (
     <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading, isAdmin}}>
