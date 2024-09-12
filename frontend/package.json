@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4000",
     "lint": "next lint",
-    "pm2": "NODE_PORT=4000 pm2 start npm --name frontend -- start"
+    "pm2": "pm2 start npm --name researchFront -- start"
   },
   "dependencies": {
     "@mui/x-date-pickers": "^7.3.2",
