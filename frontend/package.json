@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pm2": "PORT 4000 pm2 start npm --name frontend -- start"
+    "pm2": "NODE_PORT=4000 pm2 start npm --name frontend -- start"
   },
   "dependencies": {
     "@mui/x-date-pickers": "^7.3.2",
