@@ -5,7 +5,6 @@ import { EditButton } from "../EditButton";
 import { formatUnixTimestamp, formatUnixTimestampDuration } from "@/Utils/formatTimestamp";
 
 const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
-    console.log(contract);
   return (
         <div className="bg-gray-800 shadow-md rounded-md p-4 text-white">
           <div className="px-6 py-4">
