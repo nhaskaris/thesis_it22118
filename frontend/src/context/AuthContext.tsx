@@ -72,6 +72,8 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         setCookie(null, 'token', token);
+        
+        router.push('/projects');
       }
 
       setLoading(false);
