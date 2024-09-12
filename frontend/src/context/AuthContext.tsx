@@ -9,7 +9,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-import { useRouter } from "next/router";
+import { useRouter, usePathname  } from "next/navigation";
 import { setCookie, destroyCookie } from 'nookies'
 
 interface MyComponentProps {
@@ -33,6 +33,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const googleSignIn = async() => {
     const provider = new GoogleAuthProvider();
@@ -72,7 +73,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         setCookie(null, 'token', token);
 
-        if (router.pathname === '/') {
+        if (pathname === '/') {
           router.push('/projects');
         }
       }
