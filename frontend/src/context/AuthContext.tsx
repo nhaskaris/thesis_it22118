@@ -5,7 +5,6 @@ import {
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithRedirect,
   signInWithPopup,
   User,
 } from "firebase/auth";
@@ -58,7 +57,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         router.push('/')
-      } else {
+      } else if (!user) {
         setUser(currentUser);
 
         let token = await currentUser?.getIdToken();
@@ -72,7 +71,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         setCookie(null, 'token', token);
-        
+
         router.push('/projects');
       }
 
