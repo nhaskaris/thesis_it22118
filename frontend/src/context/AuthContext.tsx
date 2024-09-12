@@ -61,7 +61,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         router.push('/')
-      } else {
+      } else if(currentUser) {
         setUser(currentUser);
 
         let token = await currentUser?.getIdToken();
