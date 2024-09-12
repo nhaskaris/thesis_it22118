@@ -9,7 +9,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { setCookie, destroyCookie } from 'nookies'
 
 interface MyComponentProps {
@@ -57,7 +57,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         router.push('/')
-      } else if (!user) {
+      } else {
         setUser(currentUser);
 
         let token = await currentUser?.getIdToken();
@@ -72,7 +72,9 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         setCookie(null, 'token', token);
 
-        router.push('/projects');
+        if (router.pathname === '/') {
+          router.push('/projects');
+        }
       }
 
       setLoading(false);
