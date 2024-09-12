@@ -51,6 +51,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
     setIsLoggingOut(true);
 
     router.push('/')
+    router.refresh();
   };
 
   useEffect(() => {
@@ -60,7 +61,8 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         destroyCookie(null, 'token');
 
-        router.push('/')
+        router.push('/');
+        router.refresh();
       } else if(currentUser) {
         setUser(currentUser);
 
