@@ -6,7 +6,7 @@ services:
     env_file:
       - backend/.env
     ports:
-      - 8080:8080
+      - 3000:3000
     depends_on:
       - mongodb
   frontend:
@@ -14,9 +14,9 @@ services:
       context: frontend/.
     image: react-frontend:latest
     environment:
-      - PORT=3000
+      - PORT=4000
     ports:
-      - 3000:3000
+      - 4000:4000
     depends_on:
       - backend
   mongodb:

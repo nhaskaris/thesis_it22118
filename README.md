@@ -1,5 +1,27 @@
 
 # Reaserch
+
+## Table of Contents
+- [Reaserch](#reaserch)
+  - [Table of Contents](#table-of-contents)
+  - [Tech Stack](#tech-stack)
+  - [Tech Stack Versions](#tech-stack-versions)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+    - [Backend Folder](#backend-folder)
+    - [Frontend Folder](#frontend-folder)
+  - [Running](#running)
+    - [Using Docker](#using-docker)
+    - [Using Node](#using-node)
+      - [Backend Folder](#backend-folder-1)
+      - [Frontend Folder](#frontend-folder-1)
+    - [Using PM2](#using-pm2)
+      - [Backend Folder](#backend-folder-2)
+      - [Frontend Folder](#frontend-folder-2)
+  - [License](#license)
+  - [Authors](#authors)
+
+
 ## Tech Stack
 
 **Client:** React, TailwindCSS, NextJS
@@ -42,14 +64,23 @@ npm i -g @nestjs/cli
 &emsp; `next.config.mjs.template` file includes a `env` section that needs to be edited with the credentials from `Project settings` under the tab `General`. After you are done with the file rename it to `next.config.mjs`
 ## Running
 
-### Backend Folder
+### Using Docker
+
+To run the project with docker-compose. **Please make sure you have filled all the environment variables**
+```bash
+  docker-compose up -d
+```
+
+### Using Node
+
+#### Backend Folder
 
 To install the dependecies
 ```bash
   npm install
 ```
 
-To build th project
+To build the project
 ```bash
   npm run build
 ```
@@ -59,7 +90,7 @@ To start the project
   npm run start:prod
 ```
 
-### Frontend Folder
+#### Frontend Folder
 
 To install the dependecies
 ```bash
@@ -75,6 +106,49 @@ To start the project
 ```bash
   npm run start -- -p PORT_NUMBER
 ```
+
+### Using PM2
+
+#### Backend Folder
+
+To install the dependecies
+```bash
+  npm install
+```
+
+To build the project
+```bash
+  npm run build
+```
+
+To start the project
+```bash
+  npm run pm2
+```
+
+#### Frontend Folder
+
+To install the dependecies
+```bash
+  npm install
+```
+
+To build the project
+```bash
+  npm run build
+```
+
+To start the project
+```bash
+  npm run pm2 -- -p PORT_NUMBER
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+The MIT License is a permissive open-source license that allows for for-profit and non-profit use, redistribution, modification, and commercial distribution of the licensed software and its derivatives. By contributing to this project, you agree to the terms of the MIT License.
+
 ## Authors
 
 - [@EliteOneTube](https://github.com/EliteOneTube)
