@@ -20,8 +20,9 @@ function SearchBar<T>({ items, endpoint, placeholder}: SearchBarProps<T>) {
     };
 
     placeholder = 'Search ' + placeholder;
+    console.log(searchTerm != '');
     return (
-        (items && items.length > 0 || searchTerm != ' ') && (
+        (items && items.length > 0 || (searchTerm != ' ' && searchTerm != '')) && (
             <div className="flex justify-center items-center mb-4">
                 <input
                     type="text"

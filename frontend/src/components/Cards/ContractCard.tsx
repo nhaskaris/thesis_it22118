@@ -18,7 +18,7 @@ const ContractCard: React.FC<{contract: Contract}> = ({ contract }) => {
               </div>
               <div className="flex items-center mb-2">
                   <div className="text-sm font-medium text-gray-400 mr-2">Human:</div>
-                  <div className="text-sm font-semibold text-gray-200">{contract.human.firstName} {contract.human.lastName}</div>
+                  <div className="text-sm font-semibold text-gray-200">{contract.human ? contract.human.firstName : ''} {contract.human ? contract.human.lastName : ''}</div>
               </div>
               <div className="items-center mb-2">
                   <div className="text-sm font-medium text-gray-400 mr-2">Work Packages:</div>
