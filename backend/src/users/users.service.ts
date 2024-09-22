@@ -362,8 +362,17 @@ export class UsersService {
         return;
       }
 
+      for (const human of linked_user.humans) {
+        const humanExists = user.humans.find(
+          (userHuman) => userHuman.vat === human.vat,
+        );
+
+        if (!humanExists) {
+          user.humans.push(human);
+        }
+      }
+
       user.projects.push(...linked_user.projects);
-      user.humans.push(...linked_user.humans);
       user.contracts.push(...linked_user.contracts);
       user.timesheets.push(...linked_user.timesheets);
     }
