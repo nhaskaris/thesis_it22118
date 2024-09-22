@@ -12,7 +12,7 @@ const LinkedUserCard: React.FC<{ email: string }> = ({ email }) => {
               <div className="text-sm font-semibold text-gray-200">{email}</div>
           </div>
       </div>
-      <DeleteButton id={email} endpoint="users/unlinkUser"  />
+      <DeleteButton id={email} endpoint="users/unlinkUser"/>
     </div>
   );
 };

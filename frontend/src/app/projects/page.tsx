@@ -11,12 +11,7 @@ async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: true
-            }
-        }
+        return redirect('/')
     }
 
     const res = await fetch(`${process.env.BACKEND_URL}/users/getProfile`, {
@@ -31,11 +26,11 @@ async function getData() {
     })
 
     if(!res) {
-        redirect('/')
+        return redirect('/')
     }
 
     if (!res.ok) {
-        redirect('/')
+        return redirect('/')
     }
     
     const data = await res.json();
@@ -69,7 +64,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
             start: new Date(Number(project.interval.startDate)),
             end: endDate,
             progress: 0, // progress is the difference between start and end date in days
-            dependencies: project.wps.map(wps => wps.title),
+            dependencies: project.wps ? project.wps.map(wps => wps.title) : [],
             type: 'project',
             styles: {
                 backgroundColor: '#3182ce',

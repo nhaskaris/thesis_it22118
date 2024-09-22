@@ -31,7 +31,6 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -48,9 +47,9 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const logOut = async () => {
     await signOut(auth);
 
-    setIsLoggingOut(true);
+    destroyCookie(null, 'token');
 
-    window.location.href = '/';
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -59,8 +58,6 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         setUser(null);
 
         destroyCookie(null, 'token');
-
-        window.location.href = '/';
       } else if(currentUser) {
         setUser(currentUser);
 
@@ -69,7 +66,6 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         if (!token) return;
 
         const role = (await currentUser?.getIdTokenResult())?.claims.admin;
-
         setIsAdmin(!!role);
 
         token = token ? token : '';
@@ -77,10 +73,6 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         destroyCookie(null, 'token');
 
         setCookie(null, 'token', token);
-
-        if (pathname === '/' && !isLoggingOut) {
-          router.push('/projects');
-        }
       }
 
       setLoading(false);
@@ -100,7 +92,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
       clearInterval(interval);
     };
     
-  }, [router, user, pathname, isLoggingOut]);
+  }, [router, user, pathname]);
 
   return (
     <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading, isAdmin}}>

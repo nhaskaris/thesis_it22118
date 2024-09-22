@@ -8,12 +8,7 @@ async function getData() {
     const userCookies = cookies().get('token')
 
     if (!userCookies) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: true
-            }
-        }
+        return redirect('/')
     }
 
     const res = await fetch(`${process.env.BACKEND_URL}/users/getProfile`, {

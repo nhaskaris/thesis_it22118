@@ -279,9 +279,21 @@ export class UsersService {
       return;
     }
 
-    const oldUser = await this.userModel.findOne({ uid }).exec();
+    const oldUser = await this.userModel
+      .findOne({ uid })
+      .populate('linked_users')
+      .exec();
 
     if (!oldUser) {
+      return;
+    }
+
+    //if the user with the email given is already linked to the user with the uid given, return
+    const linkedUserExists = oldUser.linked_users.find(
+      (linkedUser) => linkedUser.email === email,
+    );
+
+    if (linkedUserExists) {
       return;
     }
 
@@ -373,6 +385,7 @@ export class UsersService {
       }
 
       user.projects.push(...linked_user.projects);
+
       user.contracts.push(...linked_user.contracts);
       user.timesheets.push(...linked_user.timesheets);
     }
@@ -398,7 +411,10 @@ export class UsersService {
   }
 
   async unlinkUser(uid: string, email: string) {
-    const user = await this.userModel.findOne({ uid }).exec();
+    const user = await this.userModel
+      .findOne({ uid })
+      .populate('linked_users')
+      .exec();
 
     if (!user) {
       return;
@@ -416,7 +432,7 @@ export class UsersService {
     }
 
     user.linked_users = user.linked_users.filter((userToUnlink) => {
-      userToUnlink.email !== email;
+      return userToUnlink.email !== email;
     });
 
     //for every linked user of the user with the email given, remove the user with the email given
