@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const path = require('path');
-const dotenv = require('dotenv');
-dotenv.config({ path: path.join(__dirname, '../.env') });
-const admin = require('firebase-admin');
-const crypto = require('node:crypto');
+import { connect, Schema, model } from 'mongoose';
+import { join } from 'path';
+import { config } from 'dotenv';
+config({ path: join(__dirname, '../.env') });
+import * as admin from 'firebase-admin';
+import { randomFillSync } from 'node:crypto';
 
 const adminEmail = 'nickhaskaris@gmail.com';
 
@@ -11,19 +11,13 @@ const generatePassword = (
   length = 30,
   characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@',
 ) =>
-  Array.from(crypto.randomFillSync(new Uint32Array(length)))
+  Array.from(randomFillSync(new Uint32Array(length)))
     .map((x) => characters[x % characters.length])
     .join('');
 
 const password = generatePassword();
 
-run().catch((error) => console.log(error.stack));
-
-async function run() {
-  const firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert('../private_key.json'),
-  });
-
+export async function create_admin_user(firebaseApp: admin.app.App) {
   const user = await firebaseApp
     .auth()
     .createUser({
@@ -46,9 +40,9 @@ async function run() {
     admin: true,
   });
 
-  await mongoose.connect(process.env.MONGO_URL);
+  await connect(process.env.MONGO_URL as string);
 
-  const UserSchema = new mongoose.Schema({
+  const UserSchema = new Schema({
     projects: [],
     humans: [],
     contracts: [],
@@ -57,7 +51,15 @@ async function run() {
     role: String,
     uid: String,
   });
-  const User = mongoose.model('User', UserSchema);
+  const User = model('User', UserSchema);
+
+  //Check if user already exists
+  const existing = await User.findOne({ email: adminEmail });
+
+  if (existing) {
+    console.log(`Admin user already exists with email: ${adminEmail}`);
+    return;
+  }
 
   await User.create({
     projects: [],
@@ -70,8 +72,7 @@ async function run() {
   });
 
   console.log(`Admin user created with email: ${adminEmail}`);
-
-  await mongoose.disconnect();
-
-  process.exit();
+  return;
 }
+
+module.exports = { create_admin_user };

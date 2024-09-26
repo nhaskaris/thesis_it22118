@@ -14,7 +14,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URL!),
+    MongooseModule.forRoot(process.env.MONGO_URL as string, {
+      dbName: process.env.MONGO_DB_NAME as string,
+    }),
     WpsModule,
     ProjectsModule,
     HumansModule,
