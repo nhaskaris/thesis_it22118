@@ -17,7 +17,7 @@ async function bootstrap() {
   );
 
   await app.listen(process.env.PORT || 3000, async () => {
-    await create_admin_user(authService.firebaseApp);
+    await create_admin_user(authService.firebaseApp, process.env.ADMIN_EMAIL!);
 
     await app.get(HolidaysService).handleCron();
   });

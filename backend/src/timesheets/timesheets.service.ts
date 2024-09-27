@@ -6,6 +6,7 @@ import { Timesheet } from './schemas/timesheets.schemas';
 import { Model } from 'mongoose';
 import { Contract } from '../contracts/schemas/contracts.schema';
 import { Day } from '../types/day';
+import { Wp } from 'src/wps/schemas/wps.schema';
 
 @Injectable()
 export class TimesheetsService {
@@ -43,9 +44,24 @@ export class TimesheetsService {
       .find()
       .populate({
         path: 'contract',
-        populate: {
-          path: 'human',
-        },
+        populate: [
+          {
+            path: 'project',
+            model: 'Project',
+            populate: {
+              path: 'wps',
+              model: Wp.name,
+            },
+          },
+          {
+            path: 'human',
+            model: 'Human',
+          },
+          {
+            path: 'wps',
+            model: 'Wp',
+          },
+        ],
       })
       .populate({
         path: 'days',

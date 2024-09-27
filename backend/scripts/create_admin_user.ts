@@ -5,8 +5,6 @@ config({ path: join(__dirname, '../.env') });
 import * as admin from 'firebase-admin';
 import { randomFillSync } from 'node:crypto';
 
-const adminEmail = 'nickhaskaris@gmail.com';
-
 const generatePassword = (
   length = 30,
   characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@',
@@ -17,7 +15,15 @@ const generatePassword = (
 
 const password = generatePassword();
 
-export async function create_admin_user(firebaseApp: admin.app.App) {
+export async function create_admin_user(
+  firebaseApp: admin.app.App,
+  adminEmail: string,
+) {
+  if (adminEmail === undefined || adminEmail === '') {
+    console.log('Please provide an admin email address in the .env file');
+    return;
+  }
+
   const user = await firebaseApp
     .auth()
     .createUser({
@@ -40,7 +46,9 @@ export async function create_admin_user(firebaseApp: admin.app.App) {
     admin: true,
   });
 
-  await connect(process.env.MONGO_URL as string);
+  await connect(process.env.MONGO_URL!, {
+    dbName: process.env.MONGO_DB_NAME,
+  });
 
   const UserSchema = new Schema({
     projects: [],

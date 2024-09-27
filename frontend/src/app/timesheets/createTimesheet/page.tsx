@@ -21,7 +21,7 @@ export default function Home({searchParams}: {searchParams: {data: string, holid
     const handleContractChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedContract(contracts.find((contract) => contract._id === e.target.value));
     }
-
+    
     return (
         <div className="container mx-auto py-8 border border-gray-300 rounded-md shadow-md p-8 mt-2 bg-gray-800">
             <h1 className="text-3xl font-semibold mb-4">Create a New Timesheet</h1>

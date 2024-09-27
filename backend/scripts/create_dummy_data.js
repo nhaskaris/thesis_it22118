@@ -35,7 +35,7 @@ const ProjectSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  wps: { type: mongoose.Schema.Types.ObjectId, ref: 'Wp', required: true },
+  wps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp', required: true }],
   interval: { type: IntervalSchema, required: true },
 });
 const Project = mongoose.model('Project', ProjectSchema);
@@ -56,7 +56,7 @@ const ContractSchema = new mongoose.Schema({
     required: true,
   },
   human: { type: mongoose.Schema.Types.ObjectId, ref: 'Human', required: true },
-  wps: { type: [WpSchema], default: [] },
+  wps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Wp', required: true }],
   interval: { type: IntervalSchema, required: true },
   hourlyRate: { type: Number, required: true },
   totalCost: { type: Number, required: true },
@@ -101,9 +101,22 @@ const User = mongoose.model('User', UserSchema);
 
 // 2. Dummy Data Creation Functions
 
-function createInterval() {
+function createInterval(isWp = false) {
+  //if it is a wp startDate should be in the format of MXX where XX is the month
+  let startDate = faker.date.past().getTime().toString();
+
+  if (isWp) {
+    const month = faker.number.int({ min: 1, max: 12 });
+
+    if (month < 10) {
+      startDate = 'M0' + month;
+    } else {
+      startDate = 'M' + month;
+    }
+  }
+
   return {
-    startDate: faker.date.past().toISOString(),
+    startDate: startDate,
     duration: faker.number.int({ min: 1, max: 12 }),
   };
 }
@@ -111,7 +124,7 @@ function createInterval() {
 function createWp() {
   return {
     title: faker.lorem.words(3),
-    activeIntervals: [createInterval(), createInterval()],
+    activeIntervals: [createInterval(true), createInterval(true)],
   };
 }
 
@@ -134,10 +147,11 @@ function createHuman() {
 }
 
 function createContract(project, human) {
+  //fill wps with random wps from the project
   return {
     project: project._id,
     human: human._id,
-    wps: [createWp(), createWp()],
+    wps: faker.helpers.arrayElements(project.wps),
     interval: createInterval(),
     hourlyRate: faker.number.float({ min: 20, max: 150 }),
     totalCost: faker.number.float({ min: 500, max: 10000 }),
@@ -179,7 +193,9 @@ function createUser() {
 async function insertDummyData() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL, {
+      dbName: process.env.MONGO_DB_NAME,
+    });
     console.log('Connected to MongoDB');
 
     // Create and save Users
@@ -219,7 +235,7 @@ async function insertDummyData() {
         const wps = projectData.wps;
         projectData.wps = [];
         const project = new Project(projectData);
-
+        project.wps = [];
         for (const wpData of wps) {
           const wp = new Wp(wpData);
           await wp.save();
