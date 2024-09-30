@@ -172,7 +172,7 @@ function createTimesheet(contract) {
   return {
     days,
     contract: contract._id,
-    timestamp_created: faker.date.recent().toISOString(),
+    timestamp_created: faker.date.past().getTime().toString(),
   };
 }
 
