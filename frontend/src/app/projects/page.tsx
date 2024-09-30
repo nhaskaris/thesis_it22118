@@ -54,7 +54,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
 
     const tasks: Task[] = [];
 
-    projects.forEach(project => {
+    filteredProjects.forEach(project => {
         // from project.interval.duration calculate the end date
         const endDate = new Date(Number(project.interval.startDate));
         endDate.setMonth(endDate.getMonth() + project.interval.duration);
