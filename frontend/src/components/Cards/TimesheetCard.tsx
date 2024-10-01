@@ -34,7 +34,7 @@ const TimesheetCard: React.FC<{ timesheet: Timesheet, holidays: Holiday[]}> = ({
                 </div>
                 <div className="flex items-center">
                     <div className="text-sm font-medium text-gray-400 mr-2">Contract:</div>
-                    <div className="text-sm font-semibold text-gray-200">{timesheet.contract.project.title}, {timesheet.contract.human.lastName} {timesheet.contract.human.firstName}</div>
+                    <div className="text-sm font-semibold text-gray-200">{timesheet.contract ? timesheet.contract.project.title + timesheet.contract.human.lastName + timesheet.contract.human.firstName : ''}</div>
                 </div>
             </div>
             
