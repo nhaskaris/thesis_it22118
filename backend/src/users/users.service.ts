@@ -355,16 +355,8 @@ export class UsersService {
           path: 'timesheets',
           populate: [
             {
-              path: 'project',
-              model: 'Project',
-            },
-            {
-              path: 'human',
-              model: 'Human',
-            },
-            {
-              path: 'wp',
-              model: 'Wp',
+              path: 'contract',
+              model: 'Contract',
             },
           ],
         })
