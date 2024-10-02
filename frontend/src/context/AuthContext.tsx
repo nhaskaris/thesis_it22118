@@ -39,6 +39,8 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
+
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
@@ -58,7 +60,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
         setUser(null);
 
         destroyCookie(null, 'token');
-      } else if(currentUser) {
+      } else if(currentUser && !user) {
         setUser(currentUser);
 
         let token = await currentUser?.getIdToken();

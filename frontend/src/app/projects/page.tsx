@@ -90,7 +90,7 @@ export default async function Home({searchParams}: {searchParams: {q: string}}) 
                     <ProjectCard key={project._id} project={project} />
                 ))}
             </div>
-            {tasks.length > 0 && <GanttChart tasks={tasks} />}
+            {/* {tasks.length > 0 && <GanttChart tasks={tasks} />} */}
         </div>
     );
 }
