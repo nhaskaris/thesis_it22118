@@ -6,7 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Tech Stack](#tech-stack)
   - [Tech Stack Versions](#tech-stack-versions)
-  - [Installation](#installation)
+  - [Installation (If not using Docker)](#installation-if-not-using-docker)
   - [Environment Variables](#environment-variables)
     - [Backend Folder](#backend-folder)
     - [Frontend Folder](#frontend-folder)
@@ -39,7 +39,8 @@
 - **NestJS**: `10.2.0`
 - **NextJS**: `v14.2.13`
 - **MongoDB**: `7.0.6`
-## Installation
+
+## Installation (If not using Docker)
 
 - Install [NodeJS](https://nodejs.org/en/download/package-manager#installing-nodejs-via-package-manager)
 
@@ -49,19 +50,19 @@
 ```bash
 npm i -g @nestjs/cli
 ```
-
-- Create and Setup a new [firebase project](https://console.firebase.google.com/u/4/)
 ## Environment Variables
+
+Create and Setup a new [firebase project](https://console.firebase.google.com/u/4/)
 
 ### Backend Folder
 
 &emsp; Need to generate a new private key and create a  `private_key.json` file with all the information from `Project settings` under the tab `Service Accounts`
 
-&emsp; `.env.template` file includes `PORT` which defaults to 3000 if not entered and `MONGO_URL` which will default to a database named research locally. After you are done with the file rename it to `.env`
+&emsp; `.env.template` file includes `PORT` which defaults to 8090 if not entered. `MONGO_URL` and  `MONGO_DB_NAME` which will default to a database named research that is run on docker. If the mongo db is not running through the docker container provided please change the url. The user should also head over [Calendaric](https://calendarific.com/api-documentation) to create a new account and copy the api key given to `CALENDARIFIC_API_KEY`. For the first admin account to be created the field `ADMIN_EMAIL` is also neccessary. After you are done with the file rename it to `.env`
 
 ### Frontend Folder
 
-&emsp; `next.config.mjs.template` file includes a `env` section that needs to be edited with the credentials from `Project settings` under the tab `General`. After you are done with the file rename it to `next.config.mjs`
+&emsp; `next.config.mjs.template` file includes a `env` section that needs to be edited with the credentials from `Project settings` under the tab `General` (In the Firebase configuration). After you are done with the file rename it to `next.config.mjs`
 ## Running
 
 ### Using Docker
