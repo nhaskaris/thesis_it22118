@@ -152,5 +152,5 @@ The MIT License is a permissive open-source license that allows for for-profit a
 
 ## Authors
 
-- [@EliteOneTube](https://github.com/EliteOneTube)
+- [@nhaskaris](https://github.com/nhaskaris)
 
