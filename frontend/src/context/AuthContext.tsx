@@ -10,7 +10,19 @@ import {
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 import { useRouter, usePathname  } from "next/navigation";
-import { setCookie, destroyCookie } from 'nookies'
+import Cookies from "js-cookie";
+
+const setTokenCookie = (token: string) => {
+  Cookies.set("token", token, {
+    expires: 30,
+    path: "/",
+    sameSite: "lax",
+  });
+};
+
+const clearTokenCookie = () => {
+  Cookies.remove("token", { path: "/" });
+};
 
 interface MyComponentProps {
     children: React.ReactNode;
@@ -49,7 +61,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const logOut = async () => {
     await signOut(auth);
 
-    destroyCookie(null, 'token');
+    clearTokenCookie();
 
     window.location.reload();
   };
@@ -59,7 +71,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
       if (!auth) {
         setUser(null);
 
-        destroyCookie(null, 'token');
+        clearTokenCookie();
       } else if(currentUser && !user) {
         setUser(currentUser);
 
@@ -72,9 +84,9 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
 
         token = token ? token : '';
 
-        destroyCookie(null, 'token');
+        clearTokenCookie();
 
-        setCookie(null, 'token', token);
+        setTokenCookie(token);
       }
 
       setLoading(false);
@@ -84,7 +96,7 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
     const refreshToken = async () => {
       const token = await user?.getIdToken(true)!;
 
-      setCookie(null, 'token', token);
+      setTokenCookie(token);
     }
 
     const interval = setInterval(refreshToken, 10 * 60 * 1000);
