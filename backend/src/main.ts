@@ -4,11 +4,13 @@ import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 import { HolidaysService } from './holidays/holidays.service';
+import cookieParser from 'cookie-parser';
 //import a js file that will create first user from scripts/create_admin_user.js
 import { create_admin_user } from '../scripts/create_admin_user';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
 
   const authService = app.get(AuthService);
   const usersService = app.get(UsersService);
