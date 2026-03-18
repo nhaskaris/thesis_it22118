@@ -5,7 +5,7 @@ import {GanttChart} from "@/components/GanttChart";
 import { Task } from 'gantt-task-react';
 
 async function getData() {
-  const userCookies = cookies().get('token')
+  const userCookies = (await cookies()).get('token');
 
   if (!userCookies) {
       return null;

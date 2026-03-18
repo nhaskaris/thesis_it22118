@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { Project, Wp, Interval, AlertInfo } from '@/types/pages';
 import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
 import { isWpActive, isIntervalValid } from '@/Utils/formatTimestamp';
 
-export default function UpdateProjectPage({searchParams}: {searchParams: {data: string}}) {
-  const project: Project = JSON.parse(searchParams.data);
+export default function UpdateProjectPage({searchParams}: {searchParams: Promise<{ data: string }>}) {
+  const params = use(searchParams);
+  const project: Project = JSON.parse(params.data);
 
   const wps: Wp[] = project.wps;
 

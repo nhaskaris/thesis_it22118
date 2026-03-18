@@ -7,7 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import { ExportTimesheet } from '@/components/ExportTimesheet';
 
 async function getData() {
-    const userCookies = cookies().get('token')
+    const userCookies = (await cookies()).get('token');
 
     if (!userCookies) {
         return redirect('/')
@@ -38,7 +38,7 @@ async function getData() {
 }
 
 async function getHolidays() {
-    const userCookies = cookies().get('token')
+    const userCookies = (await cookies()).get('token');
 
     if (!userCookies) {
         return {

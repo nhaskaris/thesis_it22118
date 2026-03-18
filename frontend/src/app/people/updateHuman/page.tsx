@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { AlertInfo, Human } from '@/types/pages';
 import { useRouter } from 'next/navigation';
 import Alert from '@/components/Alert';
 
-export default function UpdateHumanPage({searchParams}: {searchParams: {data: string}}) {
-    const humans: Human = JSON.parse(searchParams.data);
+export default function UpdateHumanPage({searchParams}: {searchParams: Promise<{ data: string }>}) {
+  const params = use(searchParams);
+  const humans: Human = JSON.parse(params.data);
 
   const [lastName, setLastName] = useState(humans.lastName);
   const [firstName, setFirstName] = useState(humans.firstName);

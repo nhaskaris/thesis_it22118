@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertInfo, Contract, Human, Project, Wp } from '@/types/pages';
 import Alert from '@/components/Alert';
 import dayjs from 'dayjs';
 
-export default function Home({searchParams}: {searchParams: {data: string}}) {
-    const contract: Contract = JSON.parse(searchParams.data);
+export default function Home({searchParams}: {searchParams: Promise<{ data: string }>}) {
+    const params = use(searchParams);
+
+    const contract: Contract = JSON.parse(params.data);
 
     const wpIds = contract.wps.map(wp => wp._id);
 

@@ -6,7 +6,7 @@ import UserCard from "@/components/Cards/UserCard"
 import SearchBar from '@/components/SearchBar';
 
 async function getData() {
-    const userCookies = cookies().get('token')
+    const userCookies = (await cookies()).get('token');
 
     if (!userCookies) {
         return redirect('/')

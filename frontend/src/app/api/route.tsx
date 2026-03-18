@@ -1,123 +1,111 @@
 import { InsertInfo } from '@/types/pages';
-import { cookies } from 'next/headers'
-
+import { cookies } from 'next/headers';
 
 export async function DELETE(request: Request) {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')
+    // Next.js 15: cookies() is now an async function
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+
+    if (!token) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     const json = await request.json();
 
-    const res = await fetch(`${process.env.BACKEND_URL}/${json.endpoint}/${json.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token!.value
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/${json.endpoint}/${json.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: 'Bearer ' + token.value
+            }
+        });
+
+        if (!res.ok) {
+            return Response.json(res.statusText, { status: res.status });
         }
-    }).catch(err => {
-        return err.statusText;
-    });
 
-    if(!res) {
-        return Response.json(res, {
-            status: 500,
-        });
+        return new Response(res.body, { status: res.status });
+    } catch (err: any) {
+        return Response.json({ error: err.message }, { status: 500 });
     }
-
-    if (!res.ok) {
-        return Response.json(res.statusText, {
-            status: 500,
-        });
-    }
-
-    return new Response(res);
 }
 
 export async function POST(request: Request) {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+
+    if (!token) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     const info: InsertInfo = await request.json();
 
     const res = await fetch(`${process.env.BACKEND_URL}/users/insertInfo`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token!.value
+            'Content-Type': 'application/json',
+            authorization: 'Bearer ' + token.value
         },
         body: JSON.stringify(info),
-    })
-
-    if(!res) {
-        return Response.json(res, {
-            status: 500,
-        });
-    }
+    });
 
     if (!res.ok) {
-        const message = JSON.parse(await res.text()).message;
-        return Response.json(message, {
-            status: res.status,
-        });
+        const errorData = await res.json().catch(() => ({}));
+        return Response.json(errorData.message || res.statusText, { status: res.status });
     }
 
     return new Response(res.statusText);
 }
 
 export async function PATCH(request: Request) {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+
+    if (!token) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     const info: InsertInfo = await request.json();
 
     const res = await fetch(`${process.env.BACKEND_URL}/users/updateInfo`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token!.value
+            'Content-Type': 'application/json',
+            authorization: 'Bearer ' + token.value
         },
         body: JSON.stringify(info),
-    })
-
-    if(!res) {
-        return Response.json(res, {
-            status: 500,
-        });
-    }
+    });
 
     if (!res.ok) {
-        const message = JSON.parse(await res.text()).message;
-        return Response.json(message, {
-            status: res.status,
-        });
+        const errorData = await res.json().catch(() => ({}));
+        return Response.json(errorData.message || res.statusText, { status: res.status });
     }
 
     return new Response(res.statusText);
 }
 
 export async function GET() {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+
+    if (!token) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     const res = await fetch(`${process.env.BACKEND_URL}/users/getProfile`, {
-        method: 'POST',
+        method: 'POST', // Note: Keeping your original POST logic here
         headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token!.value
+            'Content-Type': 'application/json',
+            authorization: 'Bearer ' + token.value
         }
-    })
-
-    if(!res) {
-        return Response.json(res, {
-            status: 500,
-        });
-    }
+    });
 
     if (!res.ok) {
-        return Response.json({message: res.body}, {
-            status: res.status,
-        });
+        return Response.json({ message: "Failed to fetch profile" }, { status: res.status });
     }
 
-    return new Response(res.statusText);
+    // Usually you want to return the JSON data for a GET request
+    const data = await res.json();
+    return Response.json(data);
 }

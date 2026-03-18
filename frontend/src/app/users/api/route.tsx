@@ -2,7 +2,7 @@ import { UserInsertInfo } from '@/types/pages';
 import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const token = cookieStore.get('token')
 
     const info: UserInsertInfo = await request.json();

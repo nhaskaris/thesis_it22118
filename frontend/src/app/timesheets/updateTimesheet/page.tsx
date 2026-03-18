@@ -1,15 +1,14 @@
 'use client'
-import { useState } from 'react';
-
 import { Contract, Holiday, Timesheet } from "@/types/pages";
 import TimesheetCalendar from '@/components/TimesheetRelated/TimesheetCalendar';
+import { use } from "react";
 
+export default function Home({searchParams}: {searchParams: Promise<{ data: string, holidays: string }>}) {
+    const params = use(searchParams);
 
+    const timesheet: Timesheet = JSON.parse(params.data);
 
-export default function Home({searchParams}: {searchParams: {data: string, holidays: string}}) {
-    const timesheet: Timesheet = JSON.parse(searchParams.data);
-
-    const holidays: Holiday[] = JSON.parse(searchParams.holidays);
+    const holidays: Holiday[] = JSON.parse(params.holidays);
 
     const contract: Contract = timesheet.contract;
 

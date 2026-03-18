@@ -48,10 +48,12 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   const pathname = usePathname();
 
   const googleSignIn = async() => {
+    // FIX 1: Guard against null auth
+    if (!auth) return; 
+
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -59,44 +61,41 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   };
 
   const logOut = async () => {
-    await signOut(auth);
-
+    // FIX 2: Guard against null auth
+    if (auth) {
+      await signOut(auth);
+    }
     clearTokenCookie();
-
     window.location.reload();
   };
 
   useEffect(() => {
+    // FIX 3: If auth is null (like during build), stop loading and return
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!auth) {
-        setUser(null);
-
-        clearTokenCookie();
-      } else if(currentUser && !user) {
+      if(currentUser && !user) {
         setUser(currentUser);
-
-        let token = await currentUser?.getIdToken();
-
+        const token = await currentUser.getIdToken();
         if (!token) return;
 
-        const role = (await currentUser?.getIdTokenResult())?.claims.admin;
+        const role = (await currentUser.getIdTokenResult())?.claims.admin;
         setIsAdmin(!!role);
 
-        token = token ? token : '';
-
         clearTokenCookie();
-
         setTokenCookie(token);
       }
-
       setLoading(false);
     });
 
-    //refresh token every 20 minutes
     const refreshToken = async () => {
-      const token = await user?.getIdToken(true)!;
-
-      setTokenCookie(token);
+      if (user) {
+        const token = await user.getIdToken(true);
+        setTokenCookie(token);
+      }
     }
 
     const interval = setInterval(refreshToken, 10 * 60 * 1000);
@@ -109,7 +108,15 @@ export const AuthContextProvider = ({ children }: MyComponentProps) => {
   }, [router, user, pathname]);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut, photoUrl: auth.currentUser!?.photoURL, loading, isAdmin}}>
+    <AuthContext.Provider value={{ 
+        user, 
+        googleSignIn, 
+        logOut, 
+        // FIX 4: Optional chaining for photoURL
+        photoUrl: auth?.currentUser?.photoURL || null, 
+        loading, 
+        isAdmin
+    }}>
       {children}
     </AuthContext.Provider>
   );

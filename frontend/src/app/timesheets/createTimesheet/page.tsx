@@ -1,16 +1,17 @@
 'use client'
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 import { Contract, Holiday } from "@/types/pages";
 import TimesheetCalendar from '@/components/TimesheetRelated/TimesheetCalendar';
 import { isObjectActive } from '@/Utils/formatTimestamp';
 
-export default function Home({searchParams}: {searchParams: {data: string, holidays: string}}) {
+export default function Home({searchParams}: {searchParams: Promise<{ data: string, holidays: string }>}) {
     //call the api to get the holidays
 
-    const contracts: Contract[] = JSON.parse(searchParams.data);
+    const params = use(searchParams);
+    const contracts: Contract[] = JSON.parse(params.data);
 
-    const holidays: Holiday[] = JSON.parse(searchParams.holidays);
+    const holidays: Holiday[] = JSON.parse(params.holidays);
 
     const activeContracts = contracts.filter((contract) => isObjectActive(contract.interval));
 
