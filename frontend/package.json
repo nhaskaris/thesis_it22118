@@ -16,7 +16,7 @@
     "dotenv": "^17.2.3",
     "firebase": "^12.6.0",
     "gantt-task-react": "^0.3.9",
-    "next": "^15.5.6",
+    "next": "^16.1.7",
     "nookies": "^2.5.2",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
